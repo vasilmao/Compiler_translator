@@ -1,0 +1,38 @@
+digraph structs {
+	rankdir=HR;
+	el0x55c6ebad92a0 [style=filled, fillcolor="#adffbf", label="COMP_TYPE"];
+	el0x55c6ebad92d0 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55c6ebad97b0 [style=filled, fillcolor="#adffbf", label="DECL_TYPE"];
+	el0x55c6ebad97e0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | a"];
+el0x55c6ebad97b0 -> el0x55c6ebad97e0
+	el0x55c6ebad9750 [style=filled, fillcolor="#adffbf", label="CALL_TYPE"];
+	el0x55c6ebad9780 [style=filled, fillcolor="#adffbf", label="ID_TYPE | input"];
+el0x55c6ebad9750 -> el0x55c6ebad9780
+el0x55c6ebad97b0 -> el0x55c6ebad9750
+el0x55c6ebad92d0 -> el0x55c6ebad97b0
+	el0x55c6ebad9810 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55c6ebad98e0 [style=filled, fillcolor="#adffbf", label="DECL_TYPE"];
+	el0x55c6ebad9910 [style=filled, fillcolor="#adffbf", label="ID_TYPE | b"];
+el0x55c6ebad98e0 -> el0x55c6ebad9910
+	el0x55c6ebad9880 [style=filled, fillcolor="#adffbf", label="CALL_TYPE"];
+	el0x55c6ebad98b0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | input"];
+el0x55c6ebad9880 -> el0x55c6ebad98b0
+el0x55c6ebad98e0 -> el0x55c6ebad9880
+el0x55c6ebad9810 -> el0x55c6ebad98e0
+	el0x55c6ebad9940 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55c6ebad99b0 [style=filled, fillcolor="#adffbf", label="CALL_TYPE"];
+	el0x55c6ebad99e0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | print"];
+el0x55c6ebad99b0 -> el0x55c6ebad99e0
+	el0x55c6ebad9be0 [style=filled, fillcolor="#adffbf", label="ARG_TYPE"];
+	el0x55c6ebad9ae0 [style=filled, fillcolor="#adffbf", label="MATH_TYPE | +"];
+	el0x55c6ebad9ab0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | a"];
+el0x55c6ebad9ae0 -> el0x55c6ebad9ab0
+	el0x55c6ebad9bb0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | b"];
+el0x55c6ebad9ae0 -> el0x55c6ebad9bb0
+el0x55c6ebad9be0 -> el0x55c6ebad9ae0
+el0x55c6ebad99b0 -> el0x55c6ebad9be0
+el0x55c6ebad9940 -> el0x55c6ebad99b0
+el0x55c6ebad9810 -> el0x55c6ebad9940
+el0x55c6ebad92d0 -> el0x55c6ebad9810
+el0x55c6ebad92a0 -> el0x55c6ebad92d0
+}

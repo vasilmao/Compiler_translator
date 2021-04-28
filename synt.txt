@@ -1,0 +1,16 @@
+Prog ::= {Fdec '\n'+}+ 'EOF'
+Blck ::= {Str}*
+Str  ::= '    '* Stat
+Stat ::= [Expr, Assg, Jump] '\n' | Fdec | Cond | Loop
+Expr ::= Simp {['<', '>', '==', '!=', '<=', '>='] Simp}*
+Simp ::= Term {['+', '-'] Term}*
+Term ::= Prim {['*', '/'] Prim}*
+Prim ::= '(' Expr ')' | Num | Var | Call
+Call ::= Var '(' ')' | Var '(' Expr { ',' Expr}* ')'
+Assg ::= Var '=' Expr
+Fdec ::= 'def' Var {'(' ')' | '(' Var {',' Var}* ')'} ':' Blck
+Cond ::= 'if' Expr ':' '\n' Blck {'else' ':' Blck}?
+Loop ::= 'while' Expr ':' '\n' Blck
+Jump ::= 'return' Expression
+Var  ::= ['A' - 'Z', 'a' - 'z', '_'] ['A' - 'Z', 'a' - 'z', '0' - '9', '_']*
+Num  ::= ['0' - '9']+
