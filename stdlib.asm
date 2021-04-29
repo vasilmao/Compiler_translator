@@ -1,33 +1,27 @@
 input:
 xor r8, r8 ; answer
-xor r9, r9 ; counter
+xor r9, r9 ; helper
 InputLoop:
 xor rax, rax
 mov rdi, 0
 mov rsi, InBuffer
 mov rdx, 1
 syscall
-mov r10, byte ptr [InBuffer]
+mov r10b, byte [InBuffer]
 cmp r10, '0'
 jl InputLoopExit
 cmp r10, '9'
 ja InputLoopExit
-push r10
-inc r9
+sub r10, '0'
+mov r9, r8
+shl r8, 3
+shl r9, 1
+add r8, r9
+add r8, r10
+;push r10
+jmp InputLoop
 ; need: r8 = r8 * 10
 InputLoopExit:
-InputAnsWriteLoop:
-cmp r9, 0
-je InputAnsWriteLoopExit
-mov r10, r8
-shl r8, 3
-shl r10, 1
-add r8, r10
-pop r10
-add r8, r10
-dec r9
-jmp InputAnsWriteLoop
-InputAnsWriteLoopExit:
 mov rax, r8
 ret
 

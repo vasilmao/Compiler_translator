@@ -60,7 +60,7 @@ void Assembly(Node* root) {
 
 const char* stlib = R"(input:
 xor r8, r8 ; answer
-xor r9, r9 ; counter
+xor r9, r9 ; helper
 InputLoop:
 xor rax, rax
 mov rdi, 0
@@ -72,23 +72,16 @@ cmp r10, '0'
 jl InputLoopExit
 cmp r10, '9'
 ja InputLoopExit
-push r10
-inc r9
+sub r10, '0'
+mov r9, r8
+shl r8, 3
+shl r9, 1
+add r8, r9
+add r8, r10
+;push r10
 jmp InputLoop
 ; need: r8 = r8 * 10
 InputLoopExit:
-InputAnsWriteLoop:
-cmp r9, 0
-je InputAnsWriteLoopExit
-mov r10, r8
-shl r8, 3
-shl r10, 1
-add r8, r10
-pop r10
-add r8, r10
-dec r9
-jmp InputAnsWriteLoop
-InputAnsWriteLoopExit:
 mov rax, r8
 ret
 
@@ -119,11 +112,17 @@ mov rbx, 10
     mov rsi, OutBuffer
     mov rdx, rcx
     syscall
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, NextLine
+    mov rdx, 1
+    syscall
 	ret
 
 section .data
 InBuffer: db 0
 OutBuffer: times 19 db 0
+NextLine: db 0x20
 )";
 
 void IncludeStdlib(FILE* out_file) {
@@ -184,9 +183,9 @@ void ASMStatement(Node* node, DynamicArray* vars, FILE* out_file){
 void ASMCondition(Node* node, DynamicArray* vars, FILE* out_file){
     assert(node);
     ParseNode(node->left, vars, out_file);
-    fprintf(out_file, "cmp rax, 0\njne LNOT%p ; this is condition start", node);
+    fprintf(out_file, "cmp rax, 0\nje LNOT%p ; this is condition start\n", node);
     ParseNode(node->right->left, vars, out_file);
-    fprintf(out_file, "LNOT%p:", node);
+    fprintf(out_file, "LNOT%p:\n", node);
     ParseNode(node->right->right, vars, out_file);
     fprintf(out_file, "nop\nnop ; condition end\n");
 }
@@ -234,16 +233,43 @@ int GetArgCnt(Node* arg_node) {
 
 void ASMReturn(Node* node, DynamicArray* vars, FILE* out_file){
     assert(node);
+    printf("RETURN %p\n", node->right);
     ParseNode(node->right, vars, out_file);
-    fprintf(out_file, "ret\n");
+    fprintf(out_file, "ret ; thats it\n");
 }
 
 void ASMMath(Node* node, DynamicArray* vars, FILE* out_file){
     assert(node);
-    fprintf(out_file, "mov rax, 0 ; here should be something more intellectual\n");
+    //fprintf(out_file, "mov rax, 0 ; here should be something more intellectual\n");
+    ParseNode(node->left, vars, out_file);
+    //fprintf(out_file, "mov rbx, rax\n");
+    fprintf(out_file, "push rax\n");
+    ParseNode(node->right, vars, out_file);
+    fprintf(out_file, "pop rbx\n");
+    fprintf(out_file, "xchg rax, rbx\nxor rdx, rdx\n");
+    if (node->value.math <= OP_DIV) {
+        switch (node->value.math) {
+            case OP_ADD: fprintf(out_file, "add rax, rbx\n"); break;
+            case OP_SUB: fprintf(out_file, "sub rax, rbx\n"); break;
+            case OP_MUL: fprintf(out_file, "mul rbx\n");      break;
+            case OP_DIV: fprintf(out_file, "div rbx\n");      break;
+        }
+    } else {
+        fprintf(out_file, "cmp rax, rbx\n");
+        switch (node->value.math) {
+            case OP_EQUAL:   fprintf(out_file, "sete al\n");   break;
+            case OP_NE:      fprintf(out_file, "setne al\n");  break;
+            case OP_LOE:     fprintf(out_file, "setle al\n");  break;
+            case OP_GOE:     fprintf(out_file, "setge al\n");  break;
+            case OP_LESS:    fprintf(out_file, "setl al\n");   break;
+            case OP_GREATER: fprintf(out_file, "setg al\n");   break;
+        }
+        fprintf(out_file, "xor rbx, rbx\nmov bl, al\nxor rax, rax\nmov al, bl\n");
+    }
 }
 
 void ASMConstant(Node* node, DynamicArray* vars, FILE* out_file){
     assert(node);
-    fprintf(out_file, "mov rax, %d ; var = const\n", node->value.num);
+    printf("doing constant %d... %p\n", node->value.num, node);
+    fprintf(out_file, "mov rax, %d ; var = const %p\n", node->value.num, node);
 }
