@@ -62,7 +62,7 @@ mov rbx, 10
 section .data
 InBuffer: db 0
 OutBuffer: times 19 db 0
-NextLine: db 0x20
+NextLine: db 0x0a
 section .text
 global _start
 _start:
@@ -74,7 +74,7 @@ mov rbp, rsp
 add rbp, 8 ; this was fdecl
 mov rax, [rbp + 0] ; this was name
 push rax
-mov rax, 2 ; var = const 0x56551bc55b60
+mov rax, 1 ; var = const 0x56408acf6b50
 pop rbx
 xchg rax, rbx
 xor rdx, rdx
@@ -85,29 +85,18 @@ mov bl, al
 xor rax, rax
 mov al, bl
 cmp rax, 0
-je LNOT0x56551bc55c50 ; this is condition start
-mov rax, 1 ; var = const 0x56551bc55bf0
+je LNOT0x56408acf6c40 ; this is condition start
+mov rax, 1 ; var = const 0x56408acf6be0
 ret ; thats it
-LNOT0x56551bc55c50:
+LNOT0x56408acf6c40:
 nop
 nop ; condition end
-push rbp ; save rbp before call
 mov rax, [rbp + 0] ; this was name
-push rax
-mov rax, 1 ; var = const 0x56551bc55e60
-pop rbx
-xchg rax, rbx
-xor rdx, rdx
-sub rax, rbx
-push rax ; this was argument passing
-call factorial ; the call
-add rsp, 8
-pop rbp ; after call
 push rax
 push rbp ; save rbp before call
 mov rax, [rbp + 0] ; this was name
 push rax
-mov rax, 2 ; var = const 0x56551bc56070
+mov rax, 1 ; var = const 0x56408acf6f50
 pop rbx
 xchg rax, rbx
 xor rdx, rdx
@@ -119,7 +108,7 @@ pop rbp ; after call
 pop rbx
 xchg rax, rbx
 xor rdx, rdx
-add rax, rbx
+mul rbx
 ret ; thats it
 ret
 factorial_END:

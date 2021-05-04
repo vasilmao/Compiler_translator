@@ -10,6 +10,7 @@
 #include "DynamicArray.h"
 #include "file_reader.h"
 
+
 union Value {
     unsigned char math; // MathOP
     int64_t num;   //double value

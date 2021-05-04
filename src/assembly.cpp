@@ -1,8 +1,6 @@
 #include "assembly.h"
 
-
 void IncludeStdlib(FILE* out_file);
-
 
 void ASMFdecl(Node* node, DynamicArray* vars, FILE* out_file);
 void ASMVarDecl(Node* node, DynamicArray* vars, FILE* out_file);
@@ -43,9 +41,9 @@ void ParseNode(Node* node, DynamicArray* vars, FILE* out_file) {
     }
 }
 
-void Assembly(Node* root) {
+void Assembly(Node* root, const char* out_filename) {
     FILE* out_file = NULL;
-    open_file(&out_file, "prog.asm", "w");
+    open_file(&out_file, out_filename, "w");
     DynamicArray* current_vars = root->value.variables;
     printf("yeah %p\n", current_vars);
     IncludeStdlib(out_file);
@@ -55,78 +53,25 @@ void Assembly(Node* root) {
     fprintf(out_file, "mov rbp, rsp\n");
     ParseNode(root, current_vars, out_file);
     fprintf(out_file, "add rsp, %d\nmov rax, 0x3C\nxor rdi, rdi\nsyscall\n", current_vars->size * 8);
+    printf("bruh1\n");
     fclose(out_file);
+    printf("bruh2\n");
 }
 
-const char* stlib = R"(input:
-xor r8, r8 ; answer
-xor r9, r9 ; helper
-InputLoop:
-xor rax, rax
-mov rdi, 0
-mov rsi, InBuffer
-mov rdx, 1
-syscall
-mov r10b, byte [InBuffer]
-cmp r10, '0'
-jl InputLoopExit
-cmp r10, '9'
-ja InputLoopExit
-sub r10, '0'
-mov r9, r8
-shl r8, 3
-shl r9, 1
-add r8, r9
-add r8, r10
-;push r10
-jmp InputLoop
-; need: r8 = r8 * 10
-InputLoopExit:
-mov rax, r8
-ret
-
-print:
-mov rax, qword [rsp + 8]
-mov rbx, 10
-    xor rdx, rdx
-    xor rdi, rdi ; counter
-	StackNumLoop:
-        div rbx ; rax = res, rdx = mod
-		push rdx
-		inc rdi
-		xor rdx, rdx
-		cmp rax, 0
-		jne StackNumLoop
-    xor rcx, rcx
-	BuffNumLoop:
-		pop rax
-        ;call WriteDigitToBuffer
-        add rax, '0'
-        mov [OutBuffer + rcx], rax
-        inc rcx
-		dec di
-		cmp di, 0
-		jne BuffNumLoop
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, OutBuffer
-    mov rdx, rcx
-    syscall
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, NextLine
-    mov rdx, 1
-    syscall
-	ret
-
-section .data
-InBuffer: db 0
-OutBuffer: times 19 db 0
-NextLine: db 0x20
-)";
-
 void IncludeStdlib(FILE* out_file) {
-    fprintf(out_file, stlib);
+    FILE* stdlib_file = NULL;
+    open_file(&stdlib_file, "stdlib.asm", "r");
+    char* buffer = NULL;
+    uint64_t buffer_size = 0;
+    read_buffer(&buffer, &buffer_size, "stdlib.asm", stdlib_file);
+    //printf("%s\n", buffer);
+    //fprintf(out_file, "keklol\n");
+    //printf("e2\n");
+    printf("eeeeee\n");
+    fwrite(buffer, sizeof(char), buffer_size, out_file);
+    //fnprintf(out_file, buffer_size, "%s\n", buffer);
+    free(buffer);
+    // fclose(stdlib_file);
 }
 
 

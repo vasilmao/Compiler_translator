@@ -26,7 +26,7 @@ mov rax, r8
 ret
 
 print:
-mov rax, qword ptr [rsp + 8]
+mov rax, qword [rsp + 8]
 mov rbx, 10
     xor rdx, rdx
     xor rdi, rdi ; counter
@@ -50,10 +50,16 @@ mov rbx, 10
     mov rax, 1
     mov rdi, 1
     mov rsi, OutBuffer
-    mov rdi, rcx
+    mov rdx, rcx
+    syscall
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, NextLine
+    mov rdx, 1
     syscall
 	ret
 
 section .data
 InBuffer: db 0
 OutBuffer: times 19 db 0
+NextLine: db 0x0a

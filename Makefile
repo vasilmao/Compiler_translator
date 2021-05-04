@@ -1,19 +1,32 @@
-options = --std=c++17
+SRC_DIR := src
+OBJ_DIR := obj
+DEP_DIR := dep
+BIN_DIR := bin # or . if you want it in the current directory
 
-translator: main.o parser.o file_reader.o DynamicArray.o assembly.o
-	g++ main.o parser.o file_reader.o DynamicArray.o assembly.o
+SRC := $(wildcard $(SRC_DIR)/*)
+OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+DEP := $(OBJ:$(OBJ_DIR)/%.o=$(DEP_DIR)/%.d)
 
-assembly.o: parser.h assembly.h assembly.cpp
-	g++ -g -c assembly.cpp $(options) $(debug)
+OUT := puton.out
 
-parser.o: parser.cpp parser.h
-	g++ -g -c parser.cpp $(options) $(debug)
+CPPFLAGS := -I include -MMD -MP # -I is a preprocessor flag, not a compiler flag
+CFLAGS   :=             # some warnings about bad code
 
-main.o: main.cpp
-	g++ -g -c main.cpp $(options) $(debug)
 
-file_reader.o: file_reader.cpp
-	g++ -g -c file_reader.cpp $(options) $(debug)
+.PHONY: all clean
 
-DynamicArray.o: DynamicArray.cpp
-	g++ -g -c DynamicArray.cpp $(options) $(debug)
+all: $(OUT)
+
+$(OUT): $(OBJ)
+	g++ $^ -o $@
+
+-include $(obj:.o=.d)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp  | $(OBJ_DIR)
+	g++ $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+$(BIN_DIR) $(OBJ_DIR):
+	mkdir -p $@
+
+clean:
+	rm -rv $(BIN_DIR) $(OBJ_DIR)

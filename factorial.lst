@@ -65,19 +65,19 @@
     62                                  section .data
     63 00000000 00                      InBuffer: db 0
     64 00000001 00<rep 13h>             OutBuffer: times 19 db 0
-    65 00000014 20                      NextLine: db 0x20
+    65 00000014 0A                      NextLine: db 0x0a
     66                                  section .text
     67                                  global _start
     68                                  _start:
     69 000000BD 4883EC08                sub rsp, 8
     70 000000C1 4889E5                  mov rbp, rsp
-    71 000000C4 EB7F                    jmp factorial_END
+    71 000000C4 EB64                    jmp factorial_END
     72                                  factorial:
     73 000000C6 4889E5                  mov rbp, rsp
     74 000000C9 4883C508                add rbp, 8 ; this was fdecl
     75 000000CD 488B4500                mov rax, [rbp + 0] ; this was name
     76 000000D1 50                      push rax
-    77 000000D2 B802000000              mov rax, 2 ; var = const 0x56551bc55b60
+    77 000000D2 B801000000              mov rax, 1 ; var = const 0x56408acf6b50
     78 000000D7 5B                      pop rbx
     79 000000D8 4893                    xchg rax, rbx
     80 000000DA 4831D2                  xor rdx, rdx
@@ -88,61 +88,50 @@
     85 000000E8 4831C0                  xor rax, rax
     86 000000EB 88D8                    mov al, bl
     87 000000ED 4883F800                cmp rax, 0
-    88 000000F1 7406                    je LNOT0x56551bc55c50 ; this is condition start
-    89 000000F3 B801000000              mov rax, 1 ; var = const 0x56551bc55bf0
+    88 000000F1 7406                    je LNOT0x56408acf6c40 ; this is condition start
+    89 000000F3 B801000000              mov rax, 1 ; var = const 0x56408acf6be0
     90 000000F8 C3                      ret ; thats it
-    91                                  LNOT0x56551bc55c50:
+    91                                  LNOT0x56408acf6c40:
     92 000000F9 90                      nop
     93 000000FA 90                      nop ; condition end
-    94 000000FB 55                      push rbp ; save rbp before call
-    95 000000FC 488B4500                mov rax, [rbp + 0] ; this was name
-    96 00000100 50                      push rax
-    97 00000101 B801000000              mov rax, 1 ; var = const 0x56551bc55e60
-    98 00000106 5B                      pop rbx
-    99 00000107 4893                    xchg rax, rbx
-   100 00000109 4831D2                  xor rdx, rdx
-   101 0000010C 4829D8                  sub rax, rbx
-   102 0000010F 50                      push rax ; this was argument passing
-   103 00000110 E8B1FFFFFF              call factorial ; the call
-   104 00000115 4883C408                add rsp, 8
-   105 00000119 5D                      pop rbp ; after call
-   106 0000011A 50                      push rax
-   107 0000011B 55                      push rbp ; save rbp before call
-   108 0000011C 488B4500                mov rax, [rbp + 0] ; this was name
-   109 00000120 50                      push rax
-   110 00000121 B802000000              mov rax, 2 ; var = const 0x56551bc56070
-   111 00000126 5B                      pop rbx
-   112 00000127 4893                    xchg rax, rbx
-   113 00000129 4831D2                  xor rdx, rdx
-   114 0000012C 4829D8                  sub rax, rbx
-   115 0000012F 50                      push rax ; this was argument passing
-   116 00000130 E891FFFFFF              call factorial ; the call
-   117 00000135 4883C408                add rsp, 8
-   118 00000139 5D                      pop rbp ; after call
-   119 0000013A 5B                      pop rbx
-   120 0000013B 4893                    xchg rax, rbx
-   121 0000013D 4831D2                  xor rdx, rdx
-   122 00000140 4801D8                  add rax, rbx
-   123 00000143 C3                      ret ; thats it
-   124 00000144 C3                      ret
-   125                                  factorial_END:
-   126 00000145 55                      push rbp ; save rbp before call
-   127 00000146 E8B5FEFFFF              call input ; the call
-   128 0000014B 4883C400                add rsp, 0
-   129 0000014F 5D                      pop rbp ; after call
-   130 00000150 48894500                mov [rbp + 0], rax ;this was var decl
-   131 00000154 55                      push rbp ; save rbp before call
-   132 00000155 55                      push rbp ; save rbp before call
-   133 00000156 488B4500                mov rax, [rbp + 0] ; this was name
-   134 0000015A 50                      push rax ; this was argument passing
-   135 0000015B E866FFFFFF              call factorial ; the call
-   136 00000160 4883C408                add rsp, 8
-   137 00000164 5D                      pop rbp ; after call
-   138 00000165 50                      push rax ; this was argument passing
-   139 00000166 E8E2FEFFFF              call print ; the call
-   140 0000016B 4883C408                add rsp, 8
-   141 0000016F 5D                      pop rbp ; after call
-   142 00000170 4883C408                add rsp, 8
-   143 00000174 B83C000000              mov rax, 0x3C
-   144 00000179 4831FF                  xor rdi, rdi
-   145 0000017C 0F05                    syscall
+    94 000000FB 488B4500                mov rax, [rbp + 0] ; this was name
+    95 000000FF 50                      push rax
+    96 00000100 55                      push rbp ; save rbp before call
+    97 00000101 488B4500                mov rax, [rbp + 0] ; this was name
+    98 00000105 50                      push rax
+    99 00000106 B801000000              mov rax, 1 ; var = const 0x56408acf6f50
+   100 0000010B 5B                      pop rbx
+   101 0000010C 4893                    xchg rax, rbx
+   102 0000010E 4831D2                  xor rdx, rdx
+   103 00000111 4829D8                  sub rax, rbx
+   104 00000114 50                      push rax ; this was argument passing
+   105 00000115 E8ACFFFFFF              call factorial ; the call
+   106 0000011A 4883C408                add rsp, 8
+   107 0000011E 5D                      pop rbp ; after call
+   108 0000011F 5B                      pop rbx
+   109 00000120 4893                    xchg rax, rbx
+   110 00000122 4831D2                  xor rdx, rdx
+   111 00000125 48F7E3                  mul rbx
+   112 00000128 C3                      ret ; thats it
+   113 00000129 C3                      ret
+   114                                  factorial_END:
+   115 0000012A 55                      push rbp ; save rbp before call
+   116 0000012B E8D0FEFFFF              call input ; the call
+   117 00000130 4883C400                add rsp, 0
+   118 00000134 5D                      pop rbp ; after call
+   119 00000135 48894500                mov [rbp + 0], rax ;this was var decl
+   120 00000139 55                      push rbp ; save rbp before call
+   121 0000013A 55                      push rbp ; save rbp before call
+   122 0000013B 488B4500                mov rax, [rbp + 0] ; this was name
+   123 0000013F 50                      push rax ; this was argument passing
+   124 00000140 E881FFFFFF              call factorial ; the call
+   125 00000145 4883C408                add rsp, 8
+   126 00000149 5D                      pop rbp ; after call
+   127 0000014A 50                      push rax ; this was argument passing
+   128 0000014B E8FDFEFFFF              call print ; the call
+   129 00000150 4883C408                add rsp, 8
+   130 00000154 5D                      pop rbp ; after call
+   131 00000155 4883C408                add rsp, 8
+   132 00000159 B83C000000              mov rax, 0x3C
+   133 0000015E 4831FF                  xor rdi, rdi
+   134 00000161 0F05                    syscall
