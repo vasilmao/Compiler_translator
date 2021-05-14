@@ -40,6 +40,7 @@ void read_buffer(char** buffer, uint64_t* buffer_size, const char* input_filenam
     *buffer = (char *) calloc(*buffer_size, sizeof(char));
     *buffer_size = fread(*buffer, sizeof(char), *buffer_size, input);
     fclose(input);
+    printf("noo %llu\n", *buffer_size);
     //fread не ставит '\0' в конце
     (*buffer)[*buffer_size] = '\0';
 }

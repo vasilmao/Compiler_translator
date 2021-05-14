@@ -1,5 +1,5 @@
-#ifndef PARSE_HEADER
-#define PARSE_HEADER
+#ifndef PARSER_HEADER
+#define PARSER_HEADER
 
 #include <stdio.h>
 #include <stdlib.h>

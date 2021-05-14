@@ -9,8 +9,8 @@ const char* help_str = R"(
 )";
 
 int main(int argc, const char* argv[]) {
-    const char* out_filename     = "prog.out";
-    const char* out_asm_filename = "prog.asm";
+    const char* out_filename     = "progr.out";
+    const char* out_asm_filename = "progr.asm";
     const char* out_real_name;
     bool specific_name           = false;
     bool asm_version             = false;
@@ -56,6 +56,8 @@ int main(int argc, const char* argv[]) {
     }
     if (asm_version) {
         Assembly(res, out_real_name);
+    } else {
+        Encode(res, out_real_name);
     }
     return 0;
 }
