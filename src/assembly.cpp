@@ -245,11 +245,11 @@ void BytecodeFdecl(Node* node, BytecodeData* data, FILE* out_file) {
     assert(node);
     Node* fname = node->right;
     //save function
-    int current_rip = data->rip;
     long jmp_file_pointer = ftell(out_file) + 1;
     //--------fprintf(out_file, "jmp %s_END\n", fname->value.name);
     fwrite(jmp_rel, sizeof(char), 5, out_file);
     data->rip += 5;
+    int jmp_rip = data->rip;
 
     AddFunctionPos(data->func_table, fname->value.name, data->rip);
 
@@ -270,7 +270,7 @@ void BytecodeFdecl(Node* node, BytecodeData* data, FILE* out_file) {
     data->rip += 1
 
     //write jump
-    int jmp_relative_distance = (data->rip - (current_rip + 5));
+    int jmp_relative_distance = data->rip - jmp_rip;
     long current_file_p = ftell(out_file);
     char number[4];
     WriteLittleInd32(jmp_relative_distance, number);
@@ -359,6 +359,7 @@ void BytecodeArgument(Node* node, BytecodeData* data, FILE* out_file){
     BytecodeParseNode(node->left, data, out_file);
     //fprintf(out_file, "push rax ; this was argument passing\n");
     fwrite(add_argument, sizeof(char), 1, out_file);
+    data->rip++;
     assert(node);
 }
 
@@ -393,35 +394,54 @@ void ASMCondition(Node* node, DynamicArray* vars, FILE* out_file){
     ASMParseNode(node->left, vars, out_file);
     fprintf(out_file, "cmp rax, 0\nje LNOT%p ; this is condition start\n", node);
     ASMParseNode(node->right->left, vars, out_file);
-    fprintf(out_file, "LNOT%p:\n", node);
+    fprintf(out_file, "jmp LEND%p\nLNOT%p:\n", node, node);
     ASMParseNode(node->right->right, vars, out_file);
-    fprintf(out_file, "nop\nnop ; condition end\n");
+    fprintf(out_file, "LEND%p:\nnop\nnop ; condition end\n", node);
 }
 
-const char chek_if_cond_true[] = {0x48, 0x83, 0xF8, 0x00}
-
-void ASMCondition(Node* node, BytecodeData* data, FILE* out_file){
-    assert(node);
-    BytecodeParseNode(node->left, data, out_file);
-    fprintf(out_file, "cmp rax, 0\nje LNOT%p ; this is condition start\n", node);
-    ASMParseNode(node->right->left, vars, out_file);
-    fprintf(out_file, "LNOT%p:\n", node);
-    ASMParseNode(node->right->right, vars, out_file);
-    fprintf(out_file, "nop\nnop ; condition end\n");
-}
-
+const char check_if_cond_true[4] = {0x48, 0x83, 0xF8, 0x00}
+const char jump_to_else[6] = {0x0F, 0x84, 0x00, 0x00, 0x00, 0x00}
 
 void BytecodeCondition(Node* node, BytecodeData* data, FILE* out_file){
     assert(node);
-    ASMParseNode(node->left, vars, out_file);
-    fprintf(out_file, "cmp rax, 0\nje LNOT%p ; this is condition start\n", node);
-    ASMParseNode(node->right->left, vars, out_file);
-    fprintf(out_file, "LNOT%p:\n", node);
-    ASMParseNode(node->right->right, vars, out_file);
-    fprintf(out_file, "nop\nnop ; condition end\n");
+    BytecodeParseNode(node->left, data, out_file);
+    //fprintf(out_file, "cmp rax, 0\nje LNOT%p ; this is condition start\n", node);
+    fwrite(check_if_cond_true, sizeof(char), 4, out_file);
+    data->rip += 4;
+    fwrite(jump_to_else, sizeof(char), 6);
+    int insert_else_rip = data->rip + 6;
+    long insert_else_file_p = ftell(out_file) - 4;
+    data->rip += 6;
+    BytecodeParseNode(node->right->left, vars, out_file);
+
+    //fprintf(out_file, "jmp LEND%p\nLNOT%p:\n", node, node);
+    fwrite(jmp_rel, sizeof(char), 5, out_file);
+    data->rip += 5;
+    // now insert data->rip as else
+    long current_file_p = ftell(out_file);
+    long insert_end_file_p = current_file_p - 4;
+    int insert_end_rip = data->rip;
+    fseek(out_file, insert_else_file_p, 0);
+    char rip_str[4];
+    WriteLittleInd32(data->rip - insert_else_rip, rip_str);
+    fwrite(rip_str, sizeof(char), 4, out_file);
+    fseek(out_file, current_file_p, 0);
+    BytecodeParseNode(node->right->right, vars, out_file);
+
+    //fprintf(out_file, "LEND%p:\nnop\nnop ; condition end\n", node);
+    current_file_p = ftell(out_file);
+    fseek(out_file, insert_else_file_p, 0);
+    WriteLittleInd32(data->rip - insert_end_rip, rip_str);
+    fwrite(rip_str, sizeof(char), 4, out_file);
+    fseek(out_file, current_file_p, 0);
 }
 
 void ASMIfelse(Node* node, DynamicArray* vars, FILE* out_file){
+    assert(node);
+    exit(1);
+}
+
+void BytecodeIfelse(Node* node, DynamicArray* vars, FILE* out_file){
     assert(node);
     exit(1);
 }
@@ -431,6 +451,23 @@ void ASMLoop(Node* node, DynamicArray* vars, FILE* out_file){
     fprintf(out_file, "LOOPSTART%p:\n", node);
     ASMParseNode(node->left, vars, out_file);
     fprintf(out_file, "cmp rax, 0\nje LOOPEND%p\n", node);
+    ASMParseNode(node->right, vars, out_file);
+    fprintf(out_file, "LOOPEND%p:\n", node);
+}
+
+const char test_if_rax_is_zero[3] = {0x48, 0x85, 0xC0}
+const char jump_if_equal[2] = {0x74, 0x00};
+
+void BytecodeLoop(Node* node, BytecodeData* data, FILE* out_file){
+    assert(node);
+    //fprintf(out_file, "LOOPSTART%p:\n", node);
+    long loop_start_file_p = ftell(out_file);
+    int loop_start_rip = data->rip;
+    ASMParseNode(node->left, vars, out_file);
+
+    //fprintf(out_file, "cmp rax, 0\nje LOOPEND%p\n", node);
+    fwrite(test_if_rax_is_zero, sizeof(char), 3, out_file);
+
     ASMParseNode(node->right, vars, out_file);
     fprintf(out_file, "LOOPEND%p:\n", node);
 }
