@@ -10,6 +10,7 @@ struct DynamicArray {
     Elem_t* array;
     int  capacity;
     int  size;
+    int  arg_cnt;
 };
 
 DynamicArray* newDynamicArray();

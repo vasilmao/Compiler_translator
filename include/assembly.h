@@ -6,7 +6,8 @@
 
 struct FunctionPos {
     char* func_name;
-    int pos;
+    int rip;
+    long file_p;
 };
 
 struct FuncTable {

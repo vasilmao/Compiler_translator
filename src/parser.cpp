@@ -548,6 +548,7 @@ Node* getFdec(Text* a, size_t tab_count) {
         nextToken(a, 1);
         require(a, '\n');
         a->p++;
+        func_variables->arg_cnt = func_variables->size;
         Node* block = getBlck(a, func_variables, tab_count + 4);
         result->value.variables = func_variables;
         result->right->left = block;
