@@ -30,8 +30,6 @@ Elem_t DAget(DynamicArray* darray, size_t index) {
 
 int DAfind(DynamicArray* darray, char* element) {
     for (int i = 0; i < darray->size; ++i) {
-        printf("i - %d\n", i);
-        printf("%p %p\n", element, darray->array[i].name);
         if (strcmp(element, darray->array[i].name) == 0) {
             return i;
         }

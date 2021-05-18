@@ -7,7 +7,7 @@ const char elf_header[64] = {0x7f, 0x45, 0x4c, 0x46, 0x02, 0x01, 0x01, 0x00, 0x0
 
 ElfHeader* CreateElfHeader() {
     ElfHeader* header = (ElfHeader*)calloc(1, sizeof(ElfHeader));
-    printf("%zu\n", sizeof(ElfHeader));
+   // printf("%zu\n", sizeof(ElfHeader));
     for (int i = 0; i < 64; ++i) {
         header->values[i] = elf_header[i];
     }
@@ -34,7 +34,7 @@ void WriteEntryPoint(ElfHeader* elf_header, uint64_t entry_point) {
 
 ProgramHeader* CreateProgramHeader() {
     ProgramHeader* ph = (ProgramHeader*)calloc(1, sizeof(ProgramHeader));
-    printf("%zu\n", sizeof(ProgramHeader));
+   // printf("%zu\n", sizeof(ProgramHeader));
     ph->seg_type[0] = 0x01;
     return ph;
 }

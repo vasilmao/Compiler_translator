@@ -207,11 +207,11 @@ void Encode(Node* root, const char* out_filename, int optimize) {
     FuncTable* func_table = CreateFuncTable();
     FuncTable* func_needed = CreateFuncTable();
     // add stdlib functions to func table
-    printf("input start: %x\n", stdlib_start);
+   // printf("input start: %x\n", stdlib_start);
     AddFunctionPos(func_table, "input", 0, 0);
     AddFunctionPos(func_table, "print", 0x81, 0x81);
 
-    BytecodeData data = {current_vars, buf, func_table, func_needed};
+    BytecodeData data = {current_vars, buf, func_table, func_needed, optimize};
 
     AddCode(buf, create_place_for_vars, 3);
     int var_cnt = data.variables->size * 8;
@@ -258,7 +258,7 @@ void Assembly(Node* root, const char* out_filename, int optimize) {
     FILE* out_file = NULL;
     open_file(&out_file, out_filename, "w");
     DynamicArray* current_vars = root->value.variables;
-    printf("yeah %p\n", current_vars);
+   // printf("yeah %p\n", current_vars);
     IncludeStdlib(out_file);
     fprintf(out_file, "section .text\nglobal _start\n");
     fprintf(out_file, "_start:\n");
@@ -266,9 +266,9 @@ void Assembly(Node* root, const char* out_filename, int optimize) {
     fprintf(out_file, "mov rbp, rsp\n");
     ASMParseNode(root, current_vars, out_file, optimize);
     fprintf(out_file, "add rsp, %d\nmov rax, 0x3C\nxor rdi, rdi\nsyscall\n", current_vars->size * 8);
-    printf("bruh1\n");
+   // printf("bruh1\n");
     fclose(out_file);
-    printf("bruh2\n");
+   // printf("bruh2\n");
 }
 
 void IncludeStdlibBin(CodeBuffer* buf, int in_buf, int out_buf, int new_line) {
@@ -283,7 +283,7 @@ void IncludeStdlibBin(CodeBuffer* buf, int in_buf, int out_buf, int new_line) {
     // in_buf += 0x400000;
     // out_buf += 0x400000;
     // new_line += 0x400000;
-    printf("kek!!! %x\n", in_buf);
+   // printf("kek!!! %x\n", in_buf);
     WriteLittleInd64(in_buf,   buf->buffer + 0x10); //yes, magic constants of where are stdlib string pointers
     WriteLittleInd32(in_buf,   buf->buffer + 0x22);
     WriteLittleInd64(in_buf,   buf->buffer + 0x3B);
@@ -338,7 +338,7 @@ void ASMFdecl(Node* node, DynamicArray* vars, FILE* out_file, int optimize) {
             }
         }
     }
-    printf("yeah fdecl %p\n", fname);
+   // printf("yeah fdecl %p\n", fname);
     // arguments in stack, rbp + x
     assert(node->value.variables);
     ASMParseNode(node->right->left, node->value.variables, out_file, optimize);
@@ -348,10 +348,11 @@ void ASMFdecl(Node* node, DynamicArray* vars, FILE* out_file, int optimize) {
 
 const byte mov_r64new_mem[7] = {0x4C, 0x8B, 0x85, 0x00, 0x01, 0x00, 0x00};
 const byte mov_mem_r64new[7] = {0x4C, 0x89, 0x85, 0x00, 0x01, 0x00, 0x00};
-const byte mov_r64new_rax[3] = {0x4C, 0x89, 0xC0};
-const byte mov_rax_r64new[3] = {0x49, 0x89, 0xC0};
+const byte mov_r64new_rax[3] = {0x49, 0x89, 0xC0};
+const byte mov_rax_r64new[3] = {0x4C, 0x89, 0xC0};
 
 void OptimRestoreReg(CodeBuffer* buffer, int reg_num, int mem_ofs) {
+   // printf("yes restore\n");
     assert(0 <= reg_num && reg_num <= 8);
     int reg_code = 0x85 + reg_num * 8;
     byte final_code[7];
@@ -359,32 +360,44 @@ void OptimRestoreReg(CodeBuffer* buffer, int reg_num, int mem_ofs) {
         final_code[i] = mov_r64new_mem[i];
     }
     final_code[2] = (byte)reg_code;
+    WriteLittleInd32(mem_ofs, final_code + 3);
+   // printf("%x, %x\n", (int)final_code[1], (int)final_code[2]);
     AddCode(buffer, final_code, 7);
+   // printf("%x\n", buffer->size);
 }
 
 void OptimSaveReg(CodeBuffer* buffer, int reg_num, int mem_ofs) {
+   // printf("yes save\n");
     assert(0 <= reg_num && reg_num <= 8);
     int reg_code = 0x85 + reg_num * 8;
+   // printf("%d\n", reg_num);
     byte final_code[7];
     for (int i = 0; i < 7; ++i) {
         final_code[i] = mov_mem_r64new[i];
     }
     final_code[2] = (byte)reg_code;
+    WriteLittleInd32(mem_ofs, final_code + 3);
+   // printf("%x, %x\n", (int)final_code[1], (int)final_code[2]);
     AddCode(buffer, final_code, 7);
 }
 
 void OptimSetReg(CodeBuffer* buffer, int reg_num) {
+   // printf("reg set\n");
+   // printf("%x\n", buffer->size);
     assert(0 <= reg_num && reg_num <= 8);
-    int reg_code = 0xC0 + reg_num * 8;
+    int reg_code = 0xC0 + reg_num;
     byte final_code[3];
     for (int i = 0; i < 3; ++i) {
         final_code[i] = mov_r64new_rax[i];
     }
     final_code[2] = (byte)reg_code;
     AddCode(buffer, final_code, 3);
+   // printf("%x\n", buffer->size);
 }
 
 void OptimGetReg(CodeBuffer* buffer, int reg_num) {
+   // printf("reg geet\n");
+   // printf("%x\n", buffer->size);
     assert(0 <= reg_num && reg_num <= 8);
     int reg_code = 0xC0 + reg_num * 8;
     byte final_code[3];
@@ -412,6 +425,20 @@ void BytecodeFdecl(Node* node, BytecodeData* data) {
     AddFunctionPos(data->func_table, fname->value.name, buf->size, 0);
 
     DynamicArray* vars = node->value.variables;
+
+    AddCode(buf, create_place_for_vars, 3);
+    DynamicArray* current_variables = data->variables;
+    data->variables = node->value.variables;
+    assert(node->value.variables);
+
+    // byte var_cnt_str[4];
+    int var_cnt = (data->variables->size - data->variables->arg_cnt) * 8;
+    // WriteLittleInd32(var_cnt * 8, var_cnt_str);
+    // fwrite(var_cnt_str, sizeof(char), 4, out_file);
+   // printf("yeah func decl!\n");
+    AddCode(buf, (byte*)(&var_cnt), 4);
+    AddCode(buf, init_rbp, 3);
+
     if (data->optimize & 1) {
         for (int i = 0; i < MIN(vars->size, optimized_vars); ++i) {
             int var_index_sorted = i;
@@ -433,19 +460,7 @@ void BytecodeFdecl(Node* node, BytecodeData* data) {
         }
     }
 
-    AddCode(buf, create_place_for_vars, 3);
-    DynamicArray* current_variables = data->variables;
-    data->variables = node->value.variables;
-    assert(node->value.variables);
-
-    // byte var_cnt_str[4];
-    int var_cnt = (data->variables->size - data->variables->arg_cnt) * 8;
-    // WriteLittleInd32(var_cnt * 8, var_cnt_str);
-    // fwrite(var_cnt_str, sizeof(char), 4, out_file);
-    printf("yeah func decl!\n");
-    AddCode(buf, (byte*)(&var_cnt), 4);
-    AddCode(buf, init_rbp, 3);
-    printf("yeah fdecl %p\n", fname);
+   // printf("yeah fdecl %p\n", fname);
 
     // arguments in stack, rbp + x
     BytecodeParseNode(node->right->left, data);
@@ -461,7 +476,7 @@ void BytecodeFdecl(Node* node, BytecodeData* data) {
 
     // write jump
     int jmp_relative_distance = buf->size - jmp_rip;
-    printf("func jump distance: %d\n", jmp_relative_distance);
+   // printf("func jump distance: %d\n", jmp_relative_distance);
     // long current_file_p = ftell(out_file);
     WriteLittleInd32(jmp_relative_distance, jmp_buf_pointer);
 
@@ -477,7 +492,7 @@ void ASMVarDecl(Node* node, DynamicArray* vars, FILE* out_file, int optimize) {
     assert(node);
     ASMParseNode(node->right, vars, out_file, optimize);
     // var (left_child) = expression (right_child), result of expression is needed in rax
-    printf("kk\n\n");
+   // printf("kk\n\n");
     int var_index_sorted = DAfind(vars, node->left->value.name);
     if (optimize & 1) {
         if (var_index_sorted < optimized_vars) {
@@ -492,7 +507,7 @@ void ASMVarDecl(Node* node, DynamicArray* vars, FILE* out_file, int optimize) {
     } else {
         var_offset = var_index_unsorted - vars->arg_cnt;
     }
-    printf("yeah %d * 8\n", var_offset);
+   // printf("yeah %d * 8\n", var_offset);
     var_offset *= 8;
     fprintf(out_file, "mov [rbp + %d], rax ;this was var decl\n", var_offset);
 }
@@ -507,7 +522,9 @@ void BytecodeVarDecl(Node* node, BytecodeData* data) {
     // var (left_child) = expression (right_child), result of expression is needed in rax
     // fprintf(out_file, "mov [rbp + %d], rax ;this was var decl\n", node->value.var_number * 8);
     int var_index_sorted = DAfind(data->variables, node->left->value.name);
+   // printf("aaaaaaaaaaaaaaaaaaaaaaS%d\n", data->optimize);
     if (data->optimize & 1) {
+       // printf("--------------------------------------------working\n");
         if (var_index_sorted < optimized_vars) {
             OptimSetReg(data->buffer, var_index_sorted);
             // fprintf(out_file, "mov r%d, rax\n", var_index_sorted + 8);
@@ -521,7 +538,7 @@ void BytecodeVarDecl(Node* node, BytecodeData* data) {
     } else {
         var_offset = var_index_unsorted - data->variables->arg_cnt;
     }
-    printf("yeah %d * 8\n", var_offset);
+   // printf("yeah %d * 8\n", var_offset);
     var_offset *= 8;
     AddCode(buf, var_decl_long, 3);
     AddCode(buf, (byte*)(&var_offset), 4);
@@ -545,7 +562,7 @@ void ASMName(Node* node, DynamicArray* vars, FILE* out_file, int optimize){
     } else {
         var_offset = var_index_unsorted - vars->arg_cnt;
     }
-    printf("name %d\n", var_offset * 8);
+   // printf("name %d\n", var_offset * 8);
     fprintf(out_file, "mov rax, [rbp + %d] ; this was name\n", var_offset * 8);
 
 }
@@ -556,7 +573,7 @@ const byte var_get_long[7]  = {0x48, 0x8B, 0x85, 0x00, 0x00, 0x00, 0x00};
 void BytecodeName(Node* node, BytecodeData* data) {
     assert(node);
     CodeBuffer* buf = data->buffer;
-    printf("name!!!!! %p\n", node);
+   // printf("name!!!!! %p\n", node);
     // i need to find var number and mov it to rax
     int var_index_sorted = DAfind(data->variables, node->value.name);
     if (data->optimize & 1) {
@@ -573,7 +590,7 @@ void BytecodeName(Node* node, BytecodeData* data) {
     } else {
         var_offset = var_index_unsorted - data->variables->arg_cnt;
     }
-    printf("yeah %d * 8\n", var_offset);
+   // printf("yeah %d * 8\n", var_offset);
     var_offset *= 8;
     // fprintf(out_file, "mov rax, [rbp + %d] ; this was name\n", DAfind(vars, node->value.name) * 8);
     AddCode(buf, var_get_long, 3);
@@ -608,26 +625,26 @@ void BytecodeArgument(Node* node, BytecodeData* data){
 
 void ASMComp(Node* node, DynamicArray* vars, FILE* out_file, int optimize){
     assert(node);
-    printf("yeah compound\n");
+   // printf("yeah compound\n");
     ASMParseNode(node->right, vars, out_file, optimize);
 }
 
 void BytecodeComp(Node* node, BytecodeData* data){
     assert(node);
-    printf("yeah compound\n");
+   // printf("yeah compound\n");
     BytecodeParseNode(node->right, data);
 }
 
 void ASMStatement(Node* node, DynamicArray* vars, FILE* out_file, int optimize){
     assert(node);
-    printf("yeah statement %p %p\n", node->left, node->right);
+   // printf("yeah statement %p %p\n", node->left, node->right);
     ASMParseNode(node->left, vars, out_file, optimize);
     ASMParseNode(node->right, vars, out_file, optimize);
 }
 
 void BytecodeStatement(Node* node, BytecodeData* data){
     assert(node);
-    printf("yeah statement %p %p\n", node->left, node->right);
+   // printf("yeah statement %p %p\n", node->left, node->right);
     BytecodeParseNode(node->left, data);
     BytecodeParseNode(node->right, data);
 }
@@ -742,7 +759,7 @@ void BytecodeLoop(Node* node, BytecodeData* data){
 
 void ASMAssg(Node* node, DynamicArray* vars, FILE* out_file, int optimize){
     assert(node);
-    printf("yeah assg\n");
+   // printf("yeah assg\n");
     ASMVarDecl(node, vars, out_file, optimize);
     // ASMParseNode(node->right, vars, out_file);
     // var (left_child) = expression (right_child), result of expression is needed in rax
@@ -751,7 +768,7 @@ void ASMAssg(Node* node, DynamicArray* vars, FILE* out_file, int optimize){
 
 void BytecodeAssg(Node* node, BytecodeData* data){
     assert(node);
-    printf("yeah assg\n");
+   // printf("yeah assg\n");
     // ASMParseNode(node->right, vars, out_file);
     BytecodeVarDecl(node, data);
     // var (left_child) = expression (right_child), result of expression is needed in rax
@@ -761,7 +778,7 @@ void BytecodeAssg(Node* node, BytecodeData* data){
 
 void ASMCall(Node* node, DynamicArray* vars, FILE* out_file, int optimize){
     assert(node);
-    printf("yeah call\n");
+   // printf("yeah call\n");
     ASMParseNode(node->right, vars, out_file, optimize); // arguments in stack
     if (optimize & 1) {
         for (int i = 0; i < MIN(vars->size, optimized_vars); ++i) {
@@ -805,7 +822,7 @@ const byte nop[1] = {0x90};
 
 void BytecodeCall(Node* node, BytecodeData* data){
     assert(node);
-    printf("yeah call %p\n", node);
+   // printf("yeah call %p\n", node);
     CodeBuffer* buf = data->buffer;
     // fprintf(out_file, "push rbp ; save rbp before call\n");
     // fwrite(save_rpb, sizeof(char), 1, out_file);
@@ -821,7 +838,7 @@ void BytecodeCall(Node* node, BytecodeData* data){
                 var_offset = var_index_unsorted - data->variables->arg_cnt;
             }
             //fprintf(out_file, "mov [rbp + %d], r%d ; saving optimized vars\n", var_offset * 8, i + 8);
-            OptimSaveReg(buf, i + 8, var_offset * 8);
+            OptimSaveReg(buf, i, var_offset * 8);
         }
     }
     AddCode(buf, save_rpb, 1);
@@ -864,7 +881,7 @@ int GetArgCnt(Node* arg_node) {
 
 void ASMReturn(Node* node, DynamicArray* vars, FILE* out_file, int optimize){
     assert(node);
-    printf("RETURN %p\n", node->right);
+   // printf("RETURN %p\n", node->right);
     ASMParseNode(node->right, vars, out_file, optimize);
     int var_cnt = (vars->size - vars->arg_cnt) * 8;
     fprintf(out_file, "add rsp, %d\n", var_cnt);
@@ -875,7 +892,7 @@ void ASMReturn(Node* node, DynamicArray* vars, FILE* out_file, int optimize){
 
 void BytecodeReturn(Node* node, BytecodeData* data){
     assert(node);
-    printf("RETURN %p\n", node->right);
+   // printf("RETURN %p\n", node->right);
     BytecodeParseNode(node->right, data);
     // fprintf(out_file, "ret ; thats it\n");
     // fwrite(ret, sizeof(char), 1, out_file);
@@ -942,9 +959,9 @@ const byte cmp_gg[3] = {0x0F, 0x9F, 0xC0};
 void BytecodeMath(Node* node, BytecodeData* data){
     assert(node);
     CodeBuffer* buf = data->buffer;
-    printf("bruhableeeeeeeeeeeee\n");
+   // printf("bruhableeeeeeeeeeeee\n");
     BytecodeParseNode(node->left, data);
-    printf("math! left is %p, right is %p\n", node->left, node->right);
+   // printf("math! left is %p, right is %p\n", node->left, node->right);
     // fprintf(out_file, "push rax\n");
     // fwrite(save_left_value, sizeof(char), 1, out_file);
     AddCode(buf, save_left_value, 1);
@@ -994,7 +1011,7 @@ void BytecodeMath(Node* node, BytecodeData* data){
 
 void ASMConstant(Node* node, DynamicArray* vars, FILE* out_file, int optimize){
     assert(node);
-    printf("doing constant %d... %p\n", node->value.num, node);
+   // printf("doing constant %d... %p\n", node->value.num, node);
     fprintf(out_file, "mov rax, %d ; var = const %p\n", node->value.num, node);
 }
 
@@ -1002,7 +1019,7 @@ const byte get_constant[5] = {0xB8, 0x00, 0x00, 0x00, 0x00};
 
 void BytecodeConstant(Node* node, BytecodeData* data){
     assert(node);
-    printf("doing constant %d... %p\n", node->value.num, node);
+   // printf("doing constant %d... %p\n", node->value.num, node);
     CodeBuffer* buf = data->buffer;
     // fprintf(out_file, "mov rax, %d ; var = const %p\n", node->value.num, node);
     // fwrite(get_constant, sizeof(char), 1, out_file);

@@ -34,11 +34,11 @@ int main(int argc, const char* argv[]) {
                 make_graph_dump = true;
             } else if (strncmp(argv[i], "-Oreg", 6) == 0) {
                 optimize |= 1;
-                printf("OPTIMIZEEE\n");
+                printf("optimized with registers\n");
             } else {
                 assert(input_index == -1);
                 input_index = i;
-                printf("in real name %s\n", argv[i]);
+                printf("input real name %s\n", argv[i]);
             }
         }
     }
@@ -63,5 +63,6 @@ int main(int argc, const char* argv[]) {
     } else {
         Encode(res, out_real_name, optimize);
     }
+    printf("written to %s\n", out_real_name);
     return 0;
 }

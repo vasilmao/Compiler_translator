@@ -99,85 +99,48 @@ NextLine: db 0x0a
 section .text
 global _start
 _start:
-sub rsp, 8
+sub rsp, 16
  ; 48_81 (83 if imm8 instead of imm32)_
 mov rbp, rsp
-jmp factorial_END
-factorial: ;eeee fdecl
-sub rsp, 0
-mov rbp, rsp
-mov r8, [rbp + 16]
+mov rax, 1000000000 ; var = const 0x55f8919e1a70
+mov r8, rax
+mov rax, 0 ; var = const 0x55f8919e1b50
+mov r9, rax
+LOOPSTART0x55f8919e2130:
 mov rax, r8
 push rax
-mov rax, 1 ; var = const 0x5626b432a190
+mov rax, 0 ; var = const 0x55f8919e1d10
 mov rbx, rax
 pop rax
 xor rdx, rdx
 cmp rax, rbx
 mov rax, 0
-setle al
+setg al
 xor rbx, rbx
 mov bl, al
 xor rax, rax
 mov al, bl
 cmp rax, 0
-je LNOT0x5626b432a280 ; this is condition start
-mov rax, 1 ; var = const 0x5626b432a220
-add rsp, 0
-ret ; thats it
-jmp LEND0x5626b432a280
-LNOT0x5626b432a280:
-LEND0x5626b432a280:
-nop
-nop ; condition end
+je LOOPEND0x55f8919e2130
+mov rax, r9
+push rax
+mov rax, 1 ; var = const 0x55f8919e1ec0
+mov rbx, rax
+pop rax
+xor rdx, rdx
+add rax, rbx
+mov r9, rax
 mov rax, r8
 push rax
-mov rax, r8
-push rax
-mov rax, 1 ; var = const 0x5626b432a590
+mov rax, 1 ; var = const 0x55f8919e20a0
 mov rbx, rax
 pop rax
 xor rdx, rdx
 sub rax, rbx
-push rax ; this was argument passing
-mov [rbp + 16], r8 ; saving optimized vars
-push rbp ; save rbp before call
-call factorial ; the call
-pop rbp 
-add rsp, 8
-mov r8, [rbp + 16] ; restoring optimized vars
-mov rbx, rax
-pop rax
-xor rdx, rdx
-mul rbx
-add rsp, 0
-ret ; thats it
-add rsp, 0 ; this was fdecl
-ret
-factorial_END:
-mov [rbp + 0], r8 ; saving optimized vars
-push rbp ; save rbp before call
-call input ; the call
-pop rbp 
-add rsp, 0
-mov r8, [rbp + 0] ; restoring optimized vars
 mov r8, rax
-mov rax, r8
-push rax ; this was argument passing
-mov [rbp + 0], r8 ; saving optimized vars
-push rbp ; save rbp before call
-call factorial ; the call
-pop rbp 
-add rsp, 8
-mov r8, [rbp + 0] ; restoring optimized vars
-push rax ; this was argument passing
-mov [rbp + 0], r8 ; saving optimized vars
-push rbp ; save rbp before call
-call print ; the call
-pop rbp 
-add rsp, 8
-mov r8, [rbp + 0] ; restoring optimized vars
-add rsp, 8
+jmp LOOPSTART0x55f8919e2130
+LOOPEND0x55f8919e2130:
+add rsp, 16
 mov rax, 0x3C
 xor rdi, rdi
 syscall

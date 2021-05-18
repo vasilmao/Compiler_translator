@@ -1,0 +1,11 @@
+def factorial(n):
+    if (n <= 1):
+        return 1
+    b = n
+    b = b * factorial(n - 1)
+    return b
+
+k = 10000000
+while (k > 0):
+    a = factorial(20)
+    k = k - 1

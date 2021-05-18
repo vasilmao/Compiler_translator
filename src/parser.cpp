@@ -192,21 +192,21 @@ Node* getBlck(Text* a, DynamicArray* variables, size_t tabs_expected) {
     size_t last_offs = a->p;
     size_t tab_count = countTabs(a);
     if (tabs_expected != tab_count) {
-        printf("Wrong tabs amount, expected %d\n", tabs_expected);
+       // printf("Wrong tabs amount, expected %d\n", tabs_expected);
         SyntaxError(a, "wrong amount of tabs!");
     }
-    // printf("yay getting block with %u tabs\n", tab_count);
+    //// printf("yay getting block with %u tabs\n", tab_count);
     a->p = last_offs;
     while (true) {
         size_t cur_offs = a->p;
         size_t tabs = countTabs(a);
-        // printf("tabs are %zu (ptr is %zu)\n", tabs, cur_offs);
+        //// printf("tabs are %zu (ptr is %zu)\n", tabs, cur_offs);
         if (tabs > tab_count) {
             SyntaxError(a, "wrong amount of tabs!");
         }
         if (tabs < tab_count) {
             a->p = cur_offs;
-            // printf("yeee tabs broke and its %zu at pointer %zu\n", tabs, a->p);
+            //// printf("yeee tabs broke and its %zu at pointer %zu\n", tabs, a->p);
             return current_block;
         }
         Node* statement = getStat(a, variables, tabs);
@@ -221,7 +221,7 @@ Node* getBlck(Text* a, DynamicArray* variables, size_t tabs_expected) {
         if (getChar(a, 0) == '\0') {
             break;
         }
-        printf("yeah block with var cnt %d\n", variables->size);
+       // printf("yeah block with var cnt %d\n", variables->size);
     }
     //printf("YEEEEEEEEEEEEEEEEEEEEEEEEEEE block with %u tabs got\n", tab_count);
     return current_block;
@@ -283,7 +283,7 @@ bool hasElse(Text* a) {
     while (true) {
         //printf("%d %d ", *(a->s + a->p + offs), isspace(*(a->s + a->p + offs)));
         if (*(a->s + a->p + offs) == '\0') {
-            // printf("\n");
+            //// printf("\n");
             return false;
         }
         if (isspace(*(a->s + a->p + offs)) != 0) {
@@ -292,10 +292,10 @@ bool hasElse(Text* a) {
             continue;
         }
         if (strncmp(a->s + a->p + offs, "else", 4) == 0) {
-            // printf("\n");
+            //// printf("\n");
             return true;
         } else {
-            // printf("\n");
+            //// printf("\n");
             return false;
         }
     }
@@ -348,10 +348,10 @@ Node* createJump() {
 
 Node* getJump(Text* a) {
     if (strncmp(a->s + a->p, "return", 6) == 0) {
-        printf("ye looks like return\n");
+       // printf("ye looks like return\n");
         nextToken(a, 6);
         Node* ret_expr = getExpr(a);
-        printf("%p\n", ret_expr);
+       // printf("%p\n", ret_expr);
         Node* result = createJump();
         if (ret_expr != NULL) {
             //SyntaxError(a, "expression needed");
@@ -371,14 +371,14 @@ Node* getStat(Text* a, DynamicArray* variables, size_t tab_count) {
         stat->left = res;
         return stat;
     }
-    // printf("not loop...\n");
+    //// printf("not loop...\n");
 
     res = getCond(a, tab_count, variables);
     if (res != NULL) {
         stat->left = res;
         return stat;
     }
-    // printf("not cond...\n");
+    //// printf("not cond...\n");
 
     res = getJump(a);
     if (res != NULL) {
@@ -387,14 +387,14 @@ Node* getStat(Text* a, DynamicArray* variables, size_t tab_count) {
         stat->left = res;
         return stat;
     }
-    // printf("not jump...\n");
+    //// printf("not jump...\n");
 
     res = getFdec(a, tab_count);
     if (res != NULL) {
         stat->left = res;
         return stat;
     }
-    // printf("not fdec...\n");
+    //// printf("not fdec...\n");
 
     res = getAssg(a, variables);
     if (res != NULL) {
@@ -502,11 +502,11 @@ int CompareVarUsage(const void* var1, const void* var2) {
 Node* getFdec(Text* a, size_t tab_count) {
     size_t last_offs = a->p;
     if (strncmp(a->s + a->p, "def", 3) == 0) {
-        // printf("getting fdec\n");
+        //// printf("getting fdec\n");
         nextToken(a, 3);
-        // printf("yeah!! %c\n", getChar(a, 0));
+        //// printf("yeah!! %c\n", getChar(a, 0));
         char* func_name = getVar(a);
-        // printf("yeah!! %s\n", func_name);
+        //// printf("yeah!! %s\n", func_name);
         if (func_name == NULL) {
             SyntaxError(a, "expected function name");
         }
@@ -577,14 +577,14 @@ Node* getAssg(Text* a, DynamicArray* variables) {
         }
         //printf("assignation of %zu got expr!\n", last_offs);
         int var_number = DAfind(variables, var_name);
-        printf("find result: %d\n", var_number);
+       // printf("find result: %d\n", var_number);
         if (var_number != -1) {
             //printf("finally, assg and not decl\n");
             variables->array[var_number].usage++;
             return createAssg(var_name, expr);
         } else {
             DApushBack(variables, {var_name, 1, 0, false});
-            printf("-------------------- var %s %p\n", var_name, var_name);
+           // printf("-------------------- var %s %p\n", var_name, var_name);
             return createVarDefinition(var_name, expr, variables->size - 1);
         }
     }
@@ -625,7 +625,7 @@ Node* getCall(Text* a) {
 }
 
 Node* getPrim(Text* a) {
-    printf("getting prim\n");
+   // printf("getting prim\n");
     //printf("pointer is %d %c\n", a->p, getChar(a, 0));
     if (getChar(a, 0) == '(') {
         //printf("yay from prim to expr\n");
@@ -638,19 +638,19 @@ Node* getPrim(Text* a) {
     //printf("pointer is %d %c\n", a->p, getChar(a, 0));
     Node* res = getCall(a);
     if (res != NULL) {
-        printf("its call!!\n");
+       // printf("its call!!\n");
         return res;
     }
     //printf("pointer is %d %c\n", a->p, getChar(a, 0));
     res = getVarNode(a);
     if (res != NULL) {
-        printf("its var!!\n");
+       // printf("its var!!\n");
         return res;
     }
     //printf("pointer is %d %c\n", a->p, getChar(a, 0));
     res = getNum(a);
     if (res != NULL) {
-        printf("its num!!\n");
+       // printf("its num!!\n");
         return res;
     }
     //printf("pointer is %d %c and its just nothing!\n", a->p, getChar(a, 0));
@@ -659,10 +659,10 @@ Node* getPrim(Text* a) {
 }
 
 Node* getTerm(Text* a) {
-    printf("getting term\n");
+   // printf("getting term\n");
     size_t last_offs = a->p;
     Node* start_simp = getPrim(a);
-    printf("term::prim got %p\n", start_simp);
+   // printf("term::prim got %p\n", start_simp);
     //nextToken(a, 0);
     int res = 0;
     while (true) {
@@ -686,10 +686,10 @@ Node* getTerm(Text* a) {
 }
 
 Node* getSimp(Text* a) {
-    printf("getting simp\n");
+   // printf("getting simp\n");
     size_t last_offs = a->p;
     Node* start_simp = getTerm(a);
-    printf("%p term\n", start_simp);
+   // printf("%p term\n", start_simp);
     //nextToken(a, 0);
     int res = 0;
     while (true) {
@@ -714,10 +714,10 @@ Node* getSimp(Text* a) {
 }
 
 Node* getExpr(Text* a) {
-    printf("getting expr\n");
+   // printf("getting expr\n");
     size_t last_offs = a->p;
     Node* start_statement = getSimp(a);
-    printf("%p\n", start_statement);
+   // printf("%p\n", start_statement);
     //nextToken(a, 0);
     int res = 0;
     while (true) {
@@ -824,7 +824,7 @@ Node* createVarDefinition(char* var_name, Node* expr, int var_number) {
     result->left = (Node*)calloc(1, sizeof(Node));
     result->left->type = ID_TYPE;
     result->left->value.name = var_name;
-    printf("eeeee, %p\n", result->left->value.name);
+   // printf("eeeee, %p\n", result->left->value.name);
     result->right = expr;
     return result;
 }
@@ -860,13 +860,13 @@ void SyntaxError(Text* a, const char* error) {
     while (*(a->s + end) != '\0' && *(a->s + end) != '\n') {
         ++end;
     }
-    printf("%.*s\n", end - start, (a->s + start));
+   // printf("%.*s\n", end - start, (a->s + start));
     for (size_t i = start; i < a->p; ++i) {
-        printf(" ");
+       // printf(" ");
     }
-    printf("^\n");
-    printf("Error! index: %u (symbol %c)\n", a->p, a->s[a->p]);
-    printf("%s\n", error);
+   // printf("^\n");
+   // printf("Error! index: %u (symbol %c)\n", a->p, a->s[a->p]);
+   // printf("%s\n", error);
     assert(!"OK");
 }
 

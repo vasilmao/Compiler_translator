@@ -1,74 +1,116 @@
 digraph structs {
 	rankdir=HR;
-	el0x55a92694da00 [style=filled, fillcolor="#adffbf", label="COMP_TYPE"];
-	el0x55a92694da30 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
-	el0x55a92694da80 [style=filled, fillcolor="#adffbf", label="D_TYPE"];
-	el0x55a92694dab0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | sum"];
-	el0x55a92694e060 [style=filled, fillcolor="#adffbf", label="COMP_TYPE"];
-	el0x55a92694e090 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
-	el0x55a92694e2b0 [style=filled, fillcolor="#adffbf", label="DECL_TYPE"];
-	el0x55a92694e2e0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | c"];
-el0x55a92694e2b0 -> el0x55a92694e2e0
-	el0x55a92694e1b0 [style=filled, fillcolor="#adffbf", label="MATH_TYPE | +"];
-	el0x55a92694e180 [style=filled, fillcolor="#adffbf", label="ID_TYPE | a"];
-el0x55a92694e1b0 -> el0x55a92694e180
-	el0x55a92694e280 [style=filled, fillcolor="#adffbf", label="ID_TYPE | b"];
-el0x55a92694e1b0 -> el0x55a92694e280
-el0x55a92694e2b0 -> el0x55a92694e1b0
-el0x55a92694e090 -> el0x55a92694e2b0
-	el0x55a92694e310 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
-	el0x55a92694e410 [style=filled, fillcolor="#adffbf", label="JUMP_TYPE"];
-	el0x55a92694e3e0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | c"];
-el0x55a92694e410 -> el0x55a92694e3e0
-el0x55a92694e310 -> el0x55a92694e410
-el0x55a92694e090 -> el0x55a92694e310
-el0x55a92694e060 -> el0x55a92694e090
-el0x55a92694dab0 -> el0x55a92694e060
-	el0x55a92694dfe0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | a"];
-	el0x55a92694e030 [style=filled, fillcolor="#adffbf", label="ID_TYPE | b"];
-el0x55a92694dfe0 -> el0x55a92694e030
-el0x55a92694dab0 -> el0x55a92694dfe0
-el0x55a92694da80 -> el0x55a92694dab0
-el0x55a92694da30 -> el0x55a92694da80
-	el0x55a92694e440 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
-	el0x55a92694e510 [style=filled, fillcolor="#adffbf", label="DECL_TYPE"];
-	el0x55a92694e540 [style=filled, fillcolor="#adffbf", label="ID_TYPE | a"];
-el0x55a92694e510 -> el0x55a92694e540
-	el0x55a92694e4b0 [style=filled, fillcolor="#adffbf", label="CALL_TYPE"];
-	el0x55a92694e4e0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | input"];
-el0x55a92694e4b0 -> el0x55a92694e4e0
-el0x55a92694e510 -> el0x55a92694e4b0
-el0x55a92694e440 -> el0x55a92694e510
-	el0x55a92694e570 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
-	el0x55a92694e640 [style=filled, fillcolor="#adffbf", label="DECL_TYPE"];
-	el0x55a92694e670 [style=filled, fillcolor="#adffbf", label="ID_TYPE | b"];
-el0x55a92694e640 -> el0x55a92694e670
-	el0x55a92694e5e0 [style=filled, fillcolor="#adffbf", label="CALL_TYPE"];
-	el0x55a92694e610 [style=filled, fillcolor="#adffbf", label="ID_TYPE | input"];
-el0x55a92694e5e0 -> el0x55a92694e610
-el0x55a92694e640 -> el0x55a92694e5e0
-el0x55a92694e570 -> el0x55a92694e640
-	el0x55a92694e6a0 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
-	el0x55a92694e710 [style=filled, fillcolor="#adffbf", label="CALL_TYPE"];
-	el0x55a92694e740 [style=filled, fillcolor="#adffbf", label="ID_TYPE | print"];
-el0x55a92694e710 -> el0x55a92694e740
-	el0x55a92694e9f0 [style=filled, fillcolor="#adffbf", label="ARG_TYPE"];
-	el0x55a92694e790 [style=filled, fillcolor="#adffbf", label="CALL_TYPE"];
-	el0x55a92694e7c0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | sum"];
-el0x55a92694e790 -> el0x55a92694e7c0
-	el0x55a92694e8c0 [style=filled, fillcolor="#adffbf", label="ARG_TYPE"];
-	el0x55a92694e890 [style=filled, fillcolor="#adffbf", label="ID_TYPE | a"];
-el0x55a92694e8c0 -> el0x55a92694e890
-	el0x55a92694e9c0 [style=filled, fillcolor="#adffbf", label="ARG_TYPE"];
-	el0x55a92694e990 [style=filled, fillcolor="#adffbf", label="ID_TYPE | b"];
-el0x55a92694e9c0 -> el0x55a92694e990
-el0x55a92694e8c0 -> el0x55a92694e9c0
-el0x55a92694e790 -> el0x55a92694e8c0
-el0x55a92694e9f0 -> el0x55a92694e790
-el0x55a92694e710 -> el0x55a92694e9f0
-el0x55a92694e6a0 -> el0x55a92694e710
-el0x55a92694e570 -> el0x55a92694e6a0
-el0x55a92694e440 -> el0x55a92694e570
-el0x55a92694da30 -> el0x55a92694e440
-el0x55a92694da00 -> el0x55a92694da30
+	el0x55f3f8ddca60 [style=filled, fillcolor="#adffbf", label="COMP_TYPE"];
+	el0x55f3f8ddca90 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55f3f8ddcae0 [style=filled, fillcolor="#adffbf", label="D_TYPE"];
+	el0x55f3f8ddcb10 [style=filled, fillcolor="#adffbf", label="ID_TYPE | factorial"];
+	el0x55f3f8ddd070 [style=filled, fillcolor="#adffbf", label="COMP_TYPE"];
+	el0x55f3f8ddd0a0 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55f3f8ddd2c0 [style=filled, fillcolor="#adffbf", label="COND_TYPE"];
+	el0x55f3f8ddd1a0 [style=filled, fillcolor="#adffbf", label="MATH_TYPE | <="];
+	el0x55f3f8ddd170 [style=filled, fillcolor="#adffbf", label="ID_TYPE | n"];
+el0x55f3f8ddd1a0 -> el0x55f3f8ddd170
+	el0x55f3f8ddd1d0 [style=filled, fillcolor="#adffbf", label="NUMB_TYPE | 1"];
+el0x55f3f8ddd1a0 -> el0x55f3f8ddd1d0
+el0x55f3f8ddd2c0 -> el0x55f3f8ddd1a0
+	el0x55f3f8ddd2f0 [style=filled, fillcolor="#adffbf", label="IFEL_TYPE"];
+	el0x55f3f8ddd200 [style=filled, fillcolor="#adffbf", label="COMP_TYPE"];
+	el0x55f3f8ddd230 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55f3f8ddd290 [style=filled, fillcolor="#adffbf", label="JUMP_TYPE"];
+	el0x55f3f8ddd260 [style=filled, fillcolor="#adffbf", label="NUMB_TYPE | 1"];
+el0x55f3f8ddd290 -> el0x55f3f8ddd260
+el0x55f3f8ddd230 -> el0x55f3f8ddd290
+el0x55f3f8ddd200 -> el0x55f3f8ddd230
+el0x55f3f8ddd2f0 -> el0x55f3f8ddd200
+el0x55f3f8ddd2c0 -> el0x55f3f8ddd2f0
+el0x55f3f8ddd0a0 -> el0x55f3f8ddd2c0
+	el0x55f3f8ddd320 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55f3f8ddd440 [style=filled, fillcolor="#adffbf", label="DECL_TYPE"];
+	el0x55f3f8ddd470 [style=filled, fillcolor="#adffbf", label="ID_TYPE | b"];
+el0x55f3f8ddd440 -> el0x55f3f8ddd470
+	el0x55f3f8ddd410 [style=filled, fillcolor="#adffbf", label="ID_TYPE | n"];
+el0x55f3f8ddd440 -> el0x55f3f8ddd410
+el0x55f3f8ddd320 -> el0x55f3f8ddd440
+	el0x55f3f8ddd4a0 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55f3f8ddd7d0 [style=filled, fillcolor="#adffbf", label="ASSG_TYPE"];
+	el0x55f3f8ddd800 [style=filled, fillcolor="#adffbf", label="ID_TYPE | b"];
+el0x55f3f8ddd7d0 -> el0x55f3f8ddd800
+	el0x55f3f8ddd5c0 [style=filled, fillcolor="#adffbf", label="MATH_TYPE | *"];
+	el0x55f3f8ddd590 [style=filled, fillcolor="#adffbf", label="ID_TYPE | b"];
+el0x55f3f8ddd5c0 -> el0x55f3f8ddd590
+	el0x55f3f8ddd610 [style=filled, fillcolor="#adffbf", label="CALL_TYPE"];
+	el0x55f3f8ddd640 [style=filled, fillcolor="#adffbf", label="ID_TYPE | factorial"];
+el0x55f3f8ddd610 -> el0x55f3f8ddd640
+	el0x55f3f8ddd7a0 [style=filled, fillcolor="#adffbf", label="ARG_TYPE"];
+	el0x55f3f8ddd740 [style=filled, fillcolor="#adffbf", label="MATH_TYPE | -"];
+	el0x55f3f8ddd710 [style=filled, fillcolor="#adffbf", label="ID_TYPE | n"];
+el0x55f3f8ddd740 -> el0x55f3f8ddd710
+	el0x55f3f8ddd770 [style=filled, fillcolor="#adffbf", label="NUMB_TYPE | 1"];
+el0x55f3f8ddd740 -> el0x55f3f8ddd770
+el0x55f3f8ddd7a0 -> el0x55f3f8ddd740
+el0x55f3f8ddd610 -> el0x55f3f8ddd7a0
+el0x55f3f8ddd5c0 -> el0x55f3f8ddd610
+el0x55f3f8ddd7d0 -> el0x55f3f8ddd5c0
+el0x55f3f8ddd4a0 -> el0x55f3f8ddd7d0
+	el0x55f3f8ddd830 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55f3f8ddd930 [style=filled, fillcolor="#adffbf", label="JUMP_TYPE"];
+	el0x55f3f8ddd900 [style=filled, fillcolor="#adffbf", label="ID_TYPE | b"];
+el0x55f3f8ddd930 -> el0x55f3f8ddd900
+el0x55f3f8ddd830 -> el0x55f3f8ddd930
+el0x55f3f8ddd4a0 -> el0x55f3f8ddd830
+el0x55f3f8ddd320 -> el0x55f3f8ddd4a0
+el0x55f3f8ddd0a0 -> el0x55f3f8ddd320
+el0x55f3f8ddd070 -> el0x55f3f8ddd0a0
+el0x55f3f8ddcb10 -> el0x55f3f8ddd070
+	el0x55f3f8ddd040 [style=filled, fillcolor="#adffbf", label="ID_TYPE | n"];
+el0x55f3f8ddcb10 -> el0x55f3f8ddd040
+el0x55f3f8ddcae0 -> el0x55f3f8ddcb10
+el0x55f3f8ddca90 -> el0x55f3f8ddcae0
+	el0x55f3f8ddd990 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55f3f8ddda10 [style=filled, fillcolor="#adffbf", label="DECL_TYPE"];
+	el0x55f3f8ddda40 [style=filled, fillcolor="#adffbf", label="ID_TYPE | k"];
+el0x55f3f8ddda10 -> el0x55f3f8ddda40
+	el0x55f3f8ddd9e0 [style=filled, fillcolor="#adffbf", label="NUMB_TYPE | 10000000"];
+el0x55f3f8ddda10 -> el0x55f3f8ddd9e0
+el0x55f3f8ddd990 -> el0x55f3f8ddda10
+	el0x55f3f8ddda70 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55f3f8dddf70 [style=filled, fillcolor="#adffbf", label="LOOP_TYPE"];
+	el0x55f3f8dddb70 [style=filled, fillcolor="#adffbf", label="MATH_TYPE | >"];
+	el0x55f3f8dddb40 [style=filled, fillcolor="#adffbf", label="ID_TYPE | k"];
+el0x55f3f8dddb70 -> el0x55f3f8dddb40
+	el0x55f3f8dddba0 [style=filled, fillcolor="#adffbf", label="NUMB_TYPE | 0"];
+el0x55f3f8dddb70 -> el0x55f3f8dddba0
+el0x55f3f8dddf70 -> el0x55f3f8dddb70
+	el0x55f3f8dddbd0 [style=filled, fillcolor="#adffbf", label="COMP_TYPE"];
+	el0x55f3f8dddc00 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55f3f8dddd30 [style=filled, fillcolor="#adffbf", label="DECL_TYPE"];
+	el0x55f3f8dddd60 [style=filled, fillcolor="#adffbf", label="ID_TYPE | a"];
+el0x55f3f8dddd30 -> el0x55f3f8dddd60
+	el0x55f3f8dddc70 [style=filled, fillcolor="#adffbf", label="CALL_TYPE"];
+	el0x55f3f8dddca0 [style=filled, fillcolor="#adffbf", label="ID_TYPE | factorial"];
+el0x55f3f8dddc70 -> el0x55f3f8dddca0
+	el0x55f3f8dddd00 [style=filled, fillcolor="#adffbf", label="ARG_TYPE"];
+	el0x55f3f8dddcd0 [style=filled, fillcolor="#adffbf", label="NUMB_TYPE | 20"];
+el0x55f3f8dddd00 -> el0x55f3f8dddcd0
+el0x55f3f8dddc70 -> el0x55f3f8dddd00
+el0x55f3f8dddd30 -> el0x55f3f8dddc70
+el0x55f3f8dddc00 -> el0x55f3f8dddd30
+	el0x55f3f8dddd90 [style=filled, fillcolor="#adffbf", label="STAT_TYPE"];
+	el0x55f3f8dddf10 [style=filled, fillcolor="#adffbf", label="ASSG_TYPE"];
+	el0x55f3f8dddf40 [style=filled, fillcolor="#adffbf", label="ID_TYPE | k"];
+el0x55f3f8dddf10 -> el0x55f3f8dddf40
+	el0x55f3f8dddeb0 [style=filled, fillcolor="#adffbf", label="MATH_TYPE | -"];
+	el0x55f3f8ddde80 [style=filled, fillcolor="#adffbf", label="ID_TYPE | k"];
+el0x55f3f8dddeb0 -> el0x55f3f8ddde80
+	el0x55f3f8dddee0 [style=filled, fillcolor="#adffbf", label="NUMB_TYPE | 1"];
+el0x55f3f8dddeb0 -> el0x55f3f8dddee0
+el0x55f3f8dddf10 -> el0x55f3f8dddeb0
+el0x55f3f8dddd90 -> el0x55f3f8dddf10
+el0x55f3f8dddc00 -> el0x55f3f8dddd90
+el0x55f3f8dddbd0 -> el0x55f3f8dddc00
+el0x55f3f8dddf70 -> el0x55f3f8dddbd0
+el0x55f3f8ddda70 -> el0x55f3f8dddf70
+el0x55f3f8ddd990 -> el0x55f3f8ddda70
+el0x55f3f8ddca90 -> el0x55f3f8ddd990
+el0x55f3f8ddca60 -> el0x55f3f8ddca90
 }
