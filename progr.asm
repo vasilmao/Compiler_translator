@@ -99,51 +99,85 @@ NextLine: db 0x0a
 section .text
 global _start
 _start:
-sub rsp, 16
+sub rsp, 8
  ; 48_81 (83 if imm8 instead of imm32)_
 mov rbp, rsp
-jmp sum_END
-sum: ;eeee fdecl
-sub rsp, 8
+jmp factorial_END
+factorial: ;eeee fdecl
+sub rsp, 0
 mov rbp, rsp
-mov rax, [rbp + 24] ; this was name
+mov r8, [rbp + 16]
+mov rax, r8
 push rax
-mov rax, [rbp + 32] ; this was name
+mov rax, 1 ; var = const 0x5626b432a190
 mov rbx, rax
 pop rax
 xor rdx, rdx
-add rax, rbx
-mov [rbp + 0], rax ;this was var decl
-mov rax, [rbp + 0] ; this was name
-add rsp, 8
+cmp rax, rbx
+mov rax, 0
+setle al
+xor rbx, rbx
+mov bl, al
+xor rax, rax
+mov al, bl
+cmp rax, 0
+je LNOT0x5626b432a280 ; this is condition start
+mov rax, 1 ; var = const 0x5626b432a220
+add rsp, 0
 ret ; thats it
-add rsp, 8 ; this was fdecl
+jmp LEND0x5626b432a280
+LNOT0x5626b432a280:
+LEND0x5626b432a280:
+nop
+nop ; condition end
+mov rax, r8
+push rax
+mov rax, r8
+push rax
+mov rax, 1 ; var = const 0x5626b432a590
+mov rbx, rax
+pop rax
+xor rdx, rdx
+sub rax, rbx
+push rax ; this was argument passing
+mov [rbp + 16], r8 ; saving optimized vars
+push rbp ; save rbp before call
+call factorial ; the call
+pop rbp 
+add rsp, 8
+mov r8, [rbp + 16] ; restoring optimized vars
+mov rbx, rax
+pop rax
+xor rdx, rdx
+mul rbx
+add rsp, 0
+ret ; thats it
+add rsp, 0 ; this was fdecl
 ret
-sum_END:
+factorial_END:
+mov [rbp + 0], r8 ; saving optimized vars
 push rbp ; save rbp before call
 call input ; the call
 pop rbp 
 add rsp, 0
-mov [rbp + 0], rax ;this was var decl
+mov r8, [rbp + 0] ; restoring optimized vars
+mov r8, rax
+mov rax, r8
+push rax ; this was argument passing
+mov [rbp + 0], r8 ; saving optimized vars
 push rbp ; save rbp before call
-call input ; the call
+call factorial ; the call
 pop rbp 
-add rsp, 0
-mov [rbp + 8], rax ;this was var decl
-mov rax, [rbp + 8] ; this was name
+add rsp, 8
+mov r8, [rbp + 0] ; restoring optimized vars
 push rax ; this was argument passing
-mov rax, [rbp + 0] ; this was name
-push rax ; this was argument passing
-push rbp ; save rbp before call
-call sum ; the call
-pop rbp 
-add rsp, 16
-push rax ; this was argument passing
+mov [rbp + 0], r8 ; saving optimized vars
 push rbp ; save rbp before call
 call print ; the call
 pop rbp 
 add rsp, 8
-add rsp, 16
+mov r8, [rbp + 0] ; restoring optimized vars
+add rsp, 8
 mov rax, 0x3C
 xor rdi, rdi
 syscall

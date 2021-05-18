@@ -104,51 +104,85 @@
     99                                  section .text
    100                                  global _start
    101                                  _start:
-   102 0000011E 4883EC10                sub rsp, 16
+   102 0000011E 4883EC08                sub rsp, 8
    103                                   ; 48_81 (83 if imm8 instead of imm32)_
    104 00000122 4889E5                  mov rbp, rsp
-   105 00000125 EB2C                    jmp sum_END
-   106                                  sum: ;eeee fdecl
-   107 00000127 4883EC08                sub rsp, 8
-   108 0000012B 4889E5                  mov rbp, rsp
-   109 0000012E 488B4518                mov rax, [rbp + 24] ; this was name
-   110 00000132 50                      push rax
-   111 00000133 488B4520                mov rax, [rbp + 32] ; this was name
-   112 00000137 4889C3                  mov rbx, rax
-   113 0000013A 58                      pop rax
-   114 0000013B 4831D2                  xor rdx, rdx
-   115 0000013E 4801D8                  add rax, rbx
-   116 00000141 48894500                mov [rbp + 0], rax ;this was var decl
-   117 00000145 488B4500                mov rax, [rbp + 0] ; this was name
-   118 00000149 4883C408                add rsp, 8
-   119 0000014D C3                      ret ; thats it
-   120 0000014E 4883C408                add rsp, 8 ; this was fdecl
-   121 00000152 C3                      ret
-   122                                  sum_END:
-   123 00000153 55                      push rbp ; save rbp before call
-   124 00000154 E8A7FEFFFF              call input ; the call
-   125 00000159 5D                      pop rbp 
-   126 0000015A 4883C400                add rsp, 0
-   127 0000015E 48894500                mov [rbp + 0], rax ;this was var decl
-   128 00000162 55                      push rbp ; save rbp before call
-   129 00000163 E898FEFFFF              call input ; the call
-   130 00000168 5D                      pop rbp 
-   131 00000169 4883C400                add rsp, 0
-   132 0000016D 48894508                mov [rbp + 8], rax ;this was var decl
-   133 00000171 488B4508                mov rax, [rbp + 8] ; this was name
-   134 00000175 50                      push rax ; this was argument passing
-   135 00000176 488B4500                mov rax, [rbp + 0] ; this was name
-   136 0000017A 50                      push rax ; this was argument passing
-   137 0000017B 55                      push rbp ; save rbp before call
-   138 0000017C E8A6FFFFFF              call sum ; the call
-   139 00000181 5D                      pop rbp 
-   140 00000182 4883C410                add rsp, 16
-   141 00000186 50                      push rax ; this was argument passing
-   142 00000187 55                      push rbp ; save rbp before call
-   143 00000188 E8F4FEFFFF              call print ; the call
-   144 0000018D 5D                      pop rbp 
-   145 0000018E 4883C408                add rsp, 8
-   146 00000192 4883C410                add rsp, 16
-   147 00000196 B83C000000              mov rax, 0x3C
-   148 0000019B 4831FF                  xor rdi, rdi
-   149 0000019E 0F05                    syscall
+   105 00000125 E983000000              jmp factorial_END
+   106                                  factorial: ;eeee fdecl
+   107 0000012A 4883EC00                sub rsp, 0
+   108 0000012E 4889E5                  mov rbp, rsp
+   109 00000131 4C8B4510                mov r8, [rbp + 16]
+   110 00000135 4C89C0                  mov rax, r8
+   111 00000138 50                      push rax
+   112 00000139 B801000000              mov rax, 1 ; var = const 0x5626b432a190
+   113 0000013E 4889C3                  mov rbx, rax
+   114 00000141 58                      pop rax
+   115 00000142 4831D2                  xor rdx, rdx
+   116 00000145 4839D8                  cmp rax, rbx
+   117 00000148 B800000000              mov rax, 0
+   118 0000014D 0F9EC0                  setle al
+   119 00000150 4831DB                  xor rbx, rbx
+   120 00000153 88C3                    mov bl, al
+   121 00000155 4831C0                  xor rax, rax
+   122 00000158 88D8                    mov al, bl
+   123 0000015A 4883F800                cmp rax, 0
+   124 0000015E 740C                    je LNOT0x5626b432a280 ; this is condition start
+   125 00000160 B801000000              mov rax, 1 ; var = const 0x5626b432a220
+   126 00000165 4883C400                add rsp, 0
+   127 00000169 C3                      ret ; thats it
+   128 0000016A EB00                    jmp LEND0x5626b432a280
+   129                                  LNOT0x5626b432a280:
+   130                                  LEND0x5626b432a280:
+   131 0000016C 90                      nop
+   132 0000016D 90                      nop ; condition end
+   133 0000016E 4C89C0                  mov rax, r8
+   134 00000171 50                      push rax
+   135 00000172 4C89C0                  mov rax, r8
+   136 00000175 50                      push rax
+   137 00000176 B801000000              mov rax, 1 ; var = const 0x5626b432a590
+   138 0000017B 4889C3                  mov rbx, rax
+   139 0000017E 58                      pop rax
+   140 0000017F 4831D2                  xor rdx, rdx
+   141 00000182 4829D8                  sub rax, rbx
+   142 00000185 50                      push rax ; this was argument passing
+   143 00000186 4C894510                mov [rbp + 16], r8 ; saving optimized vars
+   144 0000018A 55                      push rbp ; save rbp before call
+   145 0000018B E89AFFFFFF              call factorial ; the call
+   146 00000190 5D                      pop rbp 
+   147 00000191 4883C408                add rsp, 8
+   148 00000195 4C8B4510                mov r8, [rbp + 16] ; restoring optimized vars
+   149 00000199 4889C3                  mov rbx, rax
+   150 0000019C 58                      pop rax
+   151 0000019D 4831D2                  xor rdx, rdx
+   152 000001A0 48F7E3                  mul rbx
+   153 000001A3 4883C400                add rsp, 0
+   154 000001A7 C3                      ret ; thats it
+   155 000001A8 4883C400                add rsp, 0 ; this was fdecl
+   156 000001AC C3                      ret
+   157                                  factorial_END:
+   158 000001AD 4C894500                mov [rbp + 0], r8 ; saving optimized vars
+   159 000001B1 55                      push rbp ; save rbp before call
+   160 000001B2 E849FEFFFF              call input ; the call
+   161 000001B7 5D                      pop rbp 
+   162 000001B8 4883C400                add rsp, 0
+   163 000001BC 4C8B4500                mov r8, [rbp + 0] ; restoring optimized vars
+   164 000001C0 4989C0                  mov r8, rax
+   165 000001C3 4C89C0                  mov rax, r8
+   166 000001C6 50                      push rax ; this was argument passing
+   167 000001C7 4C894500                mov [rbp + 0], r8 ; saving optimized vars
+   168 000001CB 55                      push rbp ; save rbp before call
+   169 000001CC E859FFFFFF              call factorial ; the call
+   170 000001D1 5D                      pop rbp 
+   171 000001D2 4883C408                add rsp, 8
+   172 000001D6 4C8B4500                mov r8, [rbp + 0] ; restoring optimized vars
+   173 000001DA 50                      push rax ; this was argument passing
+   174 000001DB 4C894500                mov [rbp + 0], r8 ; saving optimized vars
+   175 000001DF 55                      push rbp ; save rbp before call
+   176 000001E0 E89CFEFFFF              call print ; the call
+   177 000001E5 5D                      pop rbp 
+   178 000001E6 4883C408                add rsp, 8
+   179 000001EA 4C8B4500                mov r8, [rbp + 0] ; restoring optimized vars
+   180 000001EE 4883C408                add rsp, 8
+   181 000001F2 B83C000000              mov rax, 0x3C
+   182 000001F7 4831FF                  xor rdi, rdi
+   183 000001FA 0F05                    syscall

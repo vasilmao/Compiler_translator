@@ -493,6 +493,12 @@ Node* getVarNode(Text* a){
     return result;
 }
 
+int CompareVarUsage(const void* var1, const void* var2) {
+    Variable* v1 = (Variable*)var1;
+    Variable* v2 = (Variable*)var2;
+    return (v2->usage - v2->usage);
+}
+
 Node* getFdec(Text* a, size_t tab_count) {
     size_t last_offs = a->p;
     if (strncmp(a->s + a->p, "def", 3) == 0) {
@@ -552,6 +558,7 @@ Node* getFdec(Text* a, size_t tab_count) {
         Node* block = getBlck(a, func_variables, tab_count + 4);
         result->value.variables = func_variables;
         result->right->left = block;
+        qsort(func_variables->array, func_variables->size, sizeof(Variable), CompareVarUsage);
         return result;
     }
     return NULL;

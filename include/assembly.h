@@ -16,8 +16,8 @@ struct FuncTable {
     int capacity;
 };
 
-void Assembly(Node* root, const char*  out_filename);
-void Encode(Node* root, const char* out_filename);
+void Assembly(Node* root, const char*  out_filename, bool optimize);
+void Encode(Node* root, const char* out_filename, bool optimize);
 
 
 #endif
