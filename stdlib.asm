@@ -26,7 +26,19 @@ mov rax, r8
 ret
 
 print:
-mov rax, qword [rsp + 8]
+mov rax, qword [rsp + 16]
+cmp eax, 0d
+jge AfterMinus
+push rax
+mov rax, 1
+mov rdi, 1
+mov byte [OutBuffer], '-'
+mov rsi, OutBuffer
+mov rdx, 1
+syscall
+pop rax
+neg rax
+AfterMinus:
 mov rbx, 10
     xor rdx, rdx
     xor rdi, rdi ; counter
