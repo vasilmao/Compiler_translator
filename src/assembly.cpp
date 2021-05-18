@@ -240,7 +240,7 @@ void Encode(Node* root, const char* out_filename) {
     // add stdlib functions to func table
     printf("input start: %x\n", stdlib_start);
     AddFunctionPos(func_table, "input", 0, 0);
-    AddFunctionPos(func_table, "print", 0x4D, 0x4D);
+    AddFunctionPos(func_table, "print", 0x81, 0x81);
     //entry point == right after stdlib == elf header size (const 64) + 3 prog headers size (const 56) + stdlib size
     // WriteEntryPoint(elf_header, 64 + 56 * 3 + stdlib size);
     //long entry_point_file_p = ftell(out_file);
@@ -319,7 +319,9 @@ void Encode(Node* root, const char* out_filename) {
     fwrite(code_header, sizeof(char), sizeof(ProgramHeader), out_file);
 
     fwrite(lot_of_zeroes, sizeof(byte), 0x1000 - ftell(out_file), out_file); //align
+    lot_of_zeroes[0x14] = 0x0a; // new_line
     fwrite(lot_of_zeroes, sizeof(byte), 0x1000, out_file); // aligned data segment
+    lot_of_zeroes[0x14] = 0x00; // new_line
     fwrite(buf->buffer, sizeof(byte), buf->capacity, out_file);
     // fwrite(data_seg, sizeof(char), 21, out_file);
 
@@ -359,12 +361,16 @@ void IncludeStdlibBin(CodeBuffer* buf, int in_buf, int out_buf, int new_line) {
     // new_line += 0x400000;
     printf("kek!!! %x\n", in_buf);
     WriteLittleInd64(in_buf,   buf->buffer + 0x10);
-    WriteLittleInd32(in_buf,   buf->buffer + 0x23);
-    WriteLittleInd32(out_buf,  buf->buffer + 0x65);
-    WriteLittleInd64(out_buf,  buf->buffer + 0x6C);
-    WriteLittleInd32(out_buf,  buf->buffer + 0xA5);
-    WriteLittleInd64(out_buf,  buf->buffer + 0xC1);
-    WriteLittleInd32(new_line, buf->buffer + 0xDA);
+    WriteLittleInd32(in_buf,   buf->buffer + 0x22);
+    WriteLittleInd64(in_buf,  buf->buffer + 0x3B);
+    WriteLittleInd32(in_buf,  buf->buffer + 0x4E);
+    WriteLittleInd32(out_buf,  buf->buffer + 0x99);
+    WriteLittleInd64(out_buf,  buf->buffer + 0xA0);
+    WriteLittleInd32(out_buf,  buf->buffer + 0xD9);
+    WriteLittleInd64(out_buf,  buf->buffer + 0xF5);
+    WriteLittleInd64(new_line, buf->buffer + 0x10E);
+
+
     free(char_buffer);
 }
 

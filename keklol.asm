@@ -1,3 +1,6 @@
+section .text
+global _start
+_start:
 input:
 xor r8, r8 ; answer
 xor r9, r9 ; helper
