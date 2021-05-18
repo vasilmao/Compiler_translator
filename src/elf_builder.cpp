@@ -38,3 +38,38 @@ ProgramHeader* CreateProgramHeader() {
     ph->seg_type[0] = 0x01;
     return ph;
 }
+
+
+void SetHeadersHeader(ProgramHeader* header) {
+    header->flags[0] = 4; // elf_prog_header->flags = r_flag;
+    // elf_prog_header->offset = {0x00};
+    header->virtual_address[2] = 0x40; // elf_prog_header->virtual_address = {0x00, 0x00, 0x40};
+    header->phys_address[2] = 0x40; // elf_prog_header->phys_address = {0x00, 0x00, 0x40};
+    header->file_size[0] = elf_header_size;// elf_prog_header->file_size = {0xe8, 0x00};
+    header->mem_size[0] = elf_header_size;// elf_prog_header->mem_size = {0xe8, 0x00};
+    header->alignment[1] = 0x10;
+}
+
+void SetDataHeader(ProgramHeader* header) {
+    header->flags[0] = 6;
+    header->offset[1] = 0x10;
+    header->virtual_address[1] = 0x10;
+    header->virtual_address[2] = 0x40;
+    header->phys_address[1] = 0x10;
+    header->phys_address[2] = 0x40;
+    header->file_size[0] = 0x15;
+    header->mem_size[0] = 0x15;
+    header->alignment[1] = 0x10;
+}
+
+void SetCodeHeader(ProgramHeader* header) {
+    header->flags[0] = 5; // code_header->flags = re_flag;
+    header->offset[1] = 0x20; // e8 + 15
+    header->virtual_address[1] = 0x20; // code_header->virtual_address = {0xFD, 0x00, 0x40};
+    header->virtual_address[2] = 0x40;
+    header->phys_address[1] = 0x20;// code_header->phys_address = {0xFD, 0x00, 0x40};
+    header->phys_address[2] = 0x40;
+    // code_header->file_size =  strlen(code)
+    // code_header->mem_size =   strlen(code)
+    header->alignment[1] = 0x10;
+}

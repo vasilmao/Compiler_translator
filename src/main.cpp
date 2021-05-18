@@ -15,8 +15,8 @@ int main(int argc, const char* argv[]) {
     bool specific_name           = false;
     bool asm_version             = false;
     bool make_graph_dump         = false;
-    bool optimize                = false;
-    int input_index             = -1;
+    int  optimize                = 0;
+    int  input_index             = -1;
     if (argc > 1) {
         for (int i = 1; i < argc; ++i) {
             if (strncmp(argv[i], "-o", 2) == 0) {
@@ -32,8 +32,8 @@ int main(int argc, const char* argv[]) {
                 return 0;
             } else if (strncmp(argv[i], "-gd", 3) == 0) {
                 make_graph_dump = true;
-            } else if (strncmp(argv[i], "-Ofast", 6) == 0) {
-                optimize = true;
+            } else if (strncmp(argv[i], "-Oreg", 6) == 0) {
+                optimize |= 1;
                 printf("OPTIMIZEEE\n");
             } else {
                 assert(input_index == -1);

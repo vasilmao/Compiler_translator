@@ -1,106 +1,40 @@
      1                                  section .text
      2                                  global _start
      3                                  _start:
-     4                                  input:
-     5 00000000 4D31C0                  xor r8, r8 ; answer
-     6 00000003 4D31C9                  xor r9, r9 ; helper
-     7 00000006 4831C0                  xor rax, rax
-     8 00000009 BF00000000              mov rdi, 0
-     9 0000000E 48BE-                   mov rsi, InBuffer
-     9 00000010 [0000000000000000] 
-    10 00000018 BA01000000              mov rdx, 1
-    11 0000001D 0F05                    syscall
-    12                                  
-    13 0000001F 803C25[00000000]2D      cmp byte [InBuffer], '-'
-    14 00000027 7504                    jne not_minus
-    15 00000029 6A01                    push qword 1
-    16 0000002B EB04                    jmp after_minus
-    17                                  not_minus:
-    18 0000002D 6A00                    push qword 0 ; 0 = not minus
-    19 0000002F EB19                    jmp deystvie
-    20                                  after_minus:
-    21                                  
-    22                                  InputLoop:
-    23 00000031 4831C0                  xor rax, rax
-    24 00000034 BF00000000              mov rdi, 0
-    25 00000039 48BE-                   mov rsi, InBuffer
-    25 0000003B [0000000000000000] 
-    26 00000043 BA01000000              mov rdx, 1
-    27 00000048 0F05                    syscall
-    28                                  deystvie:
-    29 0000004A 448A1425[00000000]      mov r10b, byte [InBuffer]
-    30 00000052 4983FA30                cmp r10, '0'
-    31 00000056 7C1C                    jl InputLoopExit
-    32 00000058 4983FA39                cmp r10, '9'
-    33 0000005C 7716                    ja InputLoopExit
-    34 0000005E 4983EA30                sub r10, '0'
-    35 00000062 4D89C1                  mov r9, r8
-    36 00000065 49C1E003                shl r8, 3
-    37 00000069 49D1E1                  shl r9, 1
-    38 0000006C 4D01C8                  add r8, r9
-    39 0000006F 4D01D0                  add r8, r10
-    40                                  ;push r10
-    41 00000072 EBBD                    jmp InputLoop
-    42                                  ; need: r8 = r8 * 10
-    43                                  InputLoopExit:
-    44 00000074 4C89C0                  mov rax, r8
-    45 00000077 5B                      pop rbx
-    46 00000078 4885DB                  test rbx, rbx
-    47 0000007B 7403                    je input_ret
-    48 0000007D 48F7D8                  neg rax
-    49                                  input_ret:
-    50 00000080 C3                      ret
-    51                                  
-    52                                  print:
-    53 00000081 488B442410              mov rax, qword [rsp + 16]
-    54 00000086 83F800                  cmp eax, 0d
-    55 00000089 7D28                    jge AfterMinus
-    56 0000008B 50                      push rax
-    57 0000008C B801000000              mov rax, 1
-    58 00000091 BF01000000              mov rdi, 1
-    59 00000096 C60425[01000000]2D      mov byte [OutBuffer], '-'
-    60 0000009E 48BE-                   mov rsi, OutBuffer
-    60 000000A0 [0100000000000000] 
-    61 000000A8 BA01000000              mov rdx, 1
-    62 000000AD 0F05                    syscall
-    63 000000AF 58                      pop rax
-    64 000000B0 48F7D8                  neg rax
-    65                                  AfterMinus:
-    66 000000B3 BB0A000000              mov rbx, 10
-    67 000000B8 4831D2                      xor rdx, rdx
-    68 000000BB 4831FF                      xor rdi, rdi ; counter
-    69                                  	StackNumLoop:
-    70 000000BE 48F7F3                          div rbx ; rax = res, rdx = mod
-    71 000000C1 52                      		push rdx
-    72 000000C2 48FFC7                  		inc rdi
-    73 000000C5 4831D2                  		xor rdx, rdx
-    74 000000C8 4883F800                		cmp rax, 0
-    75 000000CC 75F0                    		jne StackNumLoop
-    76 000000CE 4831C9                      xor rcx, rcx
-    77                                  	BuffNumLoop:
-    78 000000D1 58                      		pop rax
-    79                                          ;call WriteDigitToBuffer
-    80 000000D2 4883C030                        add rax, '0'
-    81 000000D6 488981[01000000]                mov [OutBuffer + rcx], rax
-    82 000000DD 48FFC1                          inc rcx
-    83 000000E0 66FFCF                  		dec di
-    84 000000E3 6683FF00                		cmp di, 0
-    85 000000E7 75E8                    		jne BuffNumLoop
-    86 000000E9 B801000000                  mov rax, 1
-    87 000000EE BF01000000                  mov rdi, 1
-    88 000000F3 48BE-                       mov rsi, OutBuffer
-    88 000000F5 [0100000000000000] 
-    89 000000FD 4889CA                      mov rdx, rcx
-    90 00000100 0F05                        syscall
-    91 00000102 B801000000                  mov rax, 1
-    92 00000107 BF01000000                  mov rdi, 1
-    93 0000010C 48BE-                       mov rsi, NextLine
-    93 0000010E [1400000000000000] 
-    94 00000116 BA01000000                  mov rdx, 1
-    95 0000011B 0F05                        syscall
-    96 0000011D C3                      	ret
-    97                                  
-    98                                  section .data
-    99 00000000 00                      InBuffer: db 0
-   100 00000001 00<rep 13h>             OutBuffer: times 19 db 0
-   101 00000014 0A                      NextLine: db 0x0a
+     4 00000000 4C89C0                  mov rax, r8
+     5 00000003 4C89C8                  mov rax, r9
+     6 00000006 4C89D0                  mov rax, r10
+     7 00000009 4C89D8                  mov rax, r11
+     8 0000000C 4C89E0                  mov rax, r12
+     9 0000000F 4C89E8                  mov rax, r13
+    10 00000012 4C89F0                  mov rax, r14
+    11 00000015 4C89F8                  mov rax, r15
+    12 00000018 90                      nop
+    13 00000019 4989C0                  mov r8, rax
+    14 0000001C 4989C1                  mov r9, rax
+    15 0000001F 4989C2                  mov r10, rax
+    16 00000022 4989C3                  mov r11, rax
+    17 00000025 4989C4                  mov r12, rax
+    18 00000028 4989C5                  mov r13, rax
+    19 0000002B 4989C6                  mov r14, rax
+    20 0000002E 4989C7                  mov r15, rax
+    21 00000031 90                      nop
+    22 00000032 4C898500010000          mov [rbp+256], r8
+    23 00000039 4C898D00010000          mov [rbp+256], r9
+    24 00000040 4C899500010000          mov [rbp+256], r10
+    25 00000047 4C899D00010000          mov [rbp+256], r11
+    26 0000004E 4C89A500010000          mov [rbp+256], r12
+    27 00000055 4C89AD00010000          mov [rbp+256], r13
+    28 0000005C 4C89B500010000          mov [rbp+256], r14
+    29 00000063 4C89BD00010000          mov [rbp+256], r15
+    30 0000006A 90                      nop
+    31 0000006B 4C8B8500010000          mov r8, [rbp+256]
+    32 00000072 4C8B8500010000          mov r8, [rbp+256]
+    33 00000079 4C8B8500010000          mov r8, [rbp+256]
+    34 00000080 4C8B8D00010000          mov r9, [rbp+256]
+    35 00000087 4C8B9500010000          mov r10, [rbp+256]
+    36 0000008E 4C8B9D00010000          mov r11, [rbp+256]
+    37 00000095 4C8BA500010000          mov r12, [rbp+256]
+    38 0000009C 4C8BAD00010000          mov r13, [rbp+256]
+    39 000000A3 4C8BB500010000          mov r14, [rbp+256]
+    40 000000AA 4C8BBD00010000          mov r15, [rbp+256]
