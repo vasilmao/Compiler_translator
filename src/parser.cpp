@@ -496,7 +496,7 @@ Node* getVarNode(Text* a){
 int CompareVarUsage(const void* var1, const void* var2) {
     Variable* v1 = (Variable*)var1;
     Variable* v2 = (Variable*)var2;
-    return (v2->usage - v2->usage);
+    return -(v2->usage - v2->usage);
 }
 
 Node* getFdec(Text* a, size_t tab_count) {
