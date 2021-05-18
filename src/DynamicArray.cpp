@@ -20,6 +20,7 @@ void DApushBack(DynamicArray* darray, Elem_t element) {
         DAresize(darray);
     }
     darray->array[darray->size++] = element;
+    darray->array[darray->size - 1].real_index = darray->size - 1;
 }
 
 Elem_t DAget(DynamicArray* darray, size_t index) {
@@ -27,9 +28,11 @@ Elem_t DAget(DynamicArray* darray, size_t index) {
     return darray->array[index];
 }
 
-int DAfind(DynamicArray* darray, Elem_t element) {
+int DAfind(DynamicArray* darray, char* element) {
     for (int i = 0; i < darray->size; ++i) {
-        if (strcmp(element, darray->array[i]) == 0) {
+        printf("i - %d\n", i);
+        printf("%p %p\n", element, darray->array[i].name);
+        if (strcmp(element, darray->array[i].name) == 0) {
             return i;
         }
     }

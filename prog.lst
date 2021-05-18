@@ -5,7 +5,7 @@
      5 00000006 4831C0                  xor rax, rax
      6 00000009 BF00000000              mov rdi, 0
      7 0000000E 48BE-                   mov rsi, InBuffer
-     7 00000010 [0000000000000000]
+     7 00000010 [0000000000000000] 
      8 00000018 BA01000000              mov rdx, 1
      9 0000001D 0F05                    syscall
     10 0000001F 448A1425[00000000]      mov r10b, byte [InBuffer]
@@ -25,7 +25,7 @@
     24                                  InputLoopExit:
     25 00000049 4C89C0                  mov rax, r8
     26 0000004C C3                      ret
-    27
+    27                                  
     28                                  print:
     29 0000004D 488B442408              mov rax, qword [rsp + 8]
     30 00000052 BB0A000000              mov rbx, 10
@@ -51,17 +51,17 @@
     50 00000088 B801000000                  mov rax, 1
     51 0000008D BF01000000                  mov rdi, 1
     52 00000092 48BE-                       mov rsi, OutBuffer
-    52 00000094 [0100000000000000]
+    52 00000094 [0100000000000000] 
     53 0000009C 4889CA                      mov rdx, rcx
     54 0000009F 0F05                        syscall
     55 000000A1 B801000000                  mov rax, 1
     56 000000A6 BF01000000                  mov rdi, 1
     57 000000AB 48BE-                       mov rsi, NextLine
-    57 000000AD [1400000000000000]
+    57 000000AD [1400000000000000] 
     58 000000B5 BA01000000                  mov rdx, 1
     59 000000BA 0F05                        syscall
     60 000000BC C3                      	ret
-    61
+    61                                  
     62                                  section .data
     63 00000000 00                      InBuffer: db 0
     64 00000001 00<rep 13h>             OutBuffer: times 19 db 0

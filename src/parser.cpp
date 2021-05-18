@@ -530,13 +530,13 @@ Node* getFdec(Text* a, size_t tab_count) {
         if (arg_name == NULL) {
             SyntaxError(a, "expected arg name");
         }
-        DApushBack(result->value.variables, arg_name);
+        DApushBack(result->value.variables, {arg_name, 1, 0, true});
         Node* cur_arg = createDefArg(arg_name);
         result->right->right = cur_arg;
         while (getChar(a, 0) == ',') {
             nextToken(a, 1);
             arg_name = getVar(a);
-            DApushBack(result->value.variables, arg_name);
+            DApushBack(result->value.variables, {arg_name, 1, 0, true});
             if (arg_name == NULL) {
                 SyntaxError(a, "expected arg name");
             }
@@ -573,9 +573,11 @@ Node* getAssg(Text* a, DynamicArray* variables) {
         printf("find result: %d\n", var_number);
         if (var_number != -1) {
             //printf("finally, assg and not decl\n");
+            variables->array[var_number].usage++;
             return createAssg(var_name, expr);
         } else {
-            DApushBack(variables, var_name);
+            DApushBack(variables, {var_name, 1, 0, false});
+            printf("-------------------- var %s %p\n", var_name, var_name);
             return createVarDefinition(var_name, expr, variables->size - 1);
         }
     }
@@ -815,6 +817,7 @@ Node* createVarDefinition(char* var_name, Node* expr, int var_number) {
     result->left = (Node*)calloc(1, sizeof(Node));
     result->left->type = ID_TYPE;
     result->left->value.name = var_name;
+    printf("eeeee, %p\n", result->left->value.name);
     result->right = expr;
     return result;
 }
