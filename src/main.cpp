@@ -5,7 +5,7 @@ const char* help_str = R"(
 -h            - show this text
 -o <filename> - specify out file name
 -S            - make asm file instead of byte
--gd           - make graph dump of parser tree
+-ast-dump     - make graph dump of parser tree
 )";
 
 int main(int argc, const char* argv[]) {
@@ -22,23 +22,29 @@ int main(int argc, const char* argv[]) {
             if (strncmp(argv[i], "-o", 2) == 0) {
                 assert(!specific_name);
                 i++;
+                if (argc == i) {
+                    printf("Error: no output filename\n");
+                    return 1;
+                }
                 out_real_name = argv[i];
                 specific_name = true;
-                printf("specific name %s\n", out_real_name);
+                printf("+ specific output name: %s\n", out_real_name);
             } else if (strncmp(argv[i], "-S", 2) == 0) {
+                printf("+ asm version%s\n");
                 asm_version = true;
             } else if (strncmp(argv[i], "-h", 2) == 0) {
                 printf(help_str);
                 return 0;
-            } else if (strncmp(argv[i], "-gd", 3) == 0) {
+            } else if (strncmp(argv[i], "-ast-dump", 9) == 0) {
                 make_graph_dump = true;
+                printf("+ tree graph dump to graph.txt and graph.svg\n");
             } else if (strncmp(argv[i], "-Oreg", 6) == 0) {
                 optimize |= 1;
-                printf("optimized with registers\n");
+                printf("+ Optimization: variables optimized with registers\n");
             } else {
                 assert(input_index == -1);
                 input_index = i;
-                printf("input real name %s\n", argv[i]);
+                printf("input filename: %s\n", argv[i]);
             }
         }
     }

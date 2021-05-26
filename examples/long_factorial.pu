@@ -5,7 +5,7 @@ def factorial(n):
     b = b * factorial(n - 1)
     return b
 
-k = 10000000
+k = 1000000
 while (k > 0):
     a = factorial(20)
     k = k - 1

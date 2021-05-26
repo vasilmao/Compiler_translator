@@ -1,4 +1,5 @@
 *.o
+*.lst
 *.out
 *.d
 obj/
